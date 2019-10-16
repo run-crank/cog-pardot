@@ -16,7 +16,7 @@ describe('ClientWrapper', () => {
 
   beforeEach(() => {
     needleConstructorStub = sinon.stub();
-    needleConstructorStub.defaults = sinon.stub();
+    needleConstructorStub.defaults = {};
   });
 
   it('authenticates', () => {
@@ -27,17 +27,7 @@ describe('ClientWrapper', () => {
 
     // Assert that the underlying API client was authenticated correctly.
     clientWrapperUnderTest = new ClientWrapper(metadata, needleConstructorStub);
-    expect(needleConstructorStub.defaults).to.have.been.calledWith(expectedCallArgs);
-  });
-
-  it('getUserByEmail', () => {
-    const expectedEmail = 'test@example.com';
-    clientWrapperUnderTest = new ClientWrapper(metadata, needleConstructorStub);
-    clientWrapperUnderTest.getUserByEmail(expectedEmail);
-
-    expect(needleConstructorStub).to.have.been.calledWith(
-      `https://jsonplaceholder.typicode.com/users?email=${expectedEmail}`,
-    );
+    return expect(needleConstructorStub.defaults.user_agent).to.equal(expectedCallArgs.user_agent);
   });
 
 });
