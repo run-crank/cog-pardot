@@ -1,5 +1,4 @@
 import * as grpc from 'grpc';
-import * as needle from 'needle';
 import { Field } from '../core/base-step';
 import { FieldDefinition } from '../proto/cog_pb';
 
@@ -42,7 +41,7 @@ export class ClientWrapper {
    *   simplify automated testing. Should default to the class/constructor of
    *   the underlying/wrapped API client.
    */
-  constructor (auth: grpc.Metadata, clientConstructor = needle) {
+  constructor (auth: grpc.Metadata, clientConstructor = {}) {
     // Call auth.get() for any field defined in the static expectedAuthFields
     // array here. The argument passed to get() should match the "field" prop
     // declared on the definition object above.
@@ -50,17 +49,7 @@ export class ClientWrapper {
     this.client = clientConstructor;
 
     // Authenticate the underlying client here.
-    this.client.defaults({ user_agent: uaString });
-  }
-
-  /**
-   * An example of how to expose the underlying API client to your steps. Any
-   * public methods exposed on this class can be invoked in your steps'
-   * executeStep methods like so: this.client.getUserByEmail()
-   */
-  public async getUserByEmail(email: string): Promise<needle.NeedleResponse> {
-    // Naturally, the code here will depend on the actual API client you use.
-    return this.client(`https://jsonplaceholder.typicode.com/users?email=${email}`);
+    this.client.defaults = { user_agent: uaString };
   }
 
 }
