@@ -16,16 +16,10 @@ export class ProspectAwareMixin {
 
     const prospects: any = await this.readByEmail(email);
 
-    let prospectId;
-
-    if (Array.isArray(prospects.prospect)) {
-      prospectId = prospects.prospect.map(f => f.id)[0];
-    } else {
-      prospectId = prospects.prospect.id;
-    }
+    const prospectId = Array.isArray(prospects) ? prospects.map(f => f.id)[0] : prospects.id;
 
     return new Promise((resolve, reject) => {
-      this.client.prospects.deleteById(prospectId).then(resolve).fail(reject);
+      this.client.prospects(prospectId).then(resolve).fail(reject);
     });
   }
 
@@ -33,7 +27,17 @@ export class ProspectAwareMixin {
     await this.clientReady;
 
     return new Promise((resolve, reject) => {
-      this.client.prospects.readByEmail(email).then(resolve).fail(reject);
+      this.client.prospects.readByEmail(email).then((response) => {
+        const prospects = response.prospect;
+
+        if (Array.isArray(prospects)) {
+          resolve(prospects.sort(
+            (a, b) => new Date(a['created_at']) < new Date(b['created_at']) ? 1 : -1));
+        } else {
+          resolve(prospects);
+        }
+
+      }).fail(reject);
     });
   }
 }

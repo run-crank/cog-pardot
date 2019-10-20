@@ -19,15 +19,4 @@ describe('ClientWrapper', () => {
     needleConstructorStub.defaults = {};
   });
 
-  it('authenticates', () => {
-    // Construct grpc metadata and assert the client was authenticated.
-    const expectedCallArgs = { user_agent: 'Some/UserAgent String' };
-    metadata = new Metadata();
-    metadata.add('userAgent', expectedCallArgs.user_agent);
-
-    // Assert that the underlying API client was authenticated correctly.
-    clientWrapperUnderTest = new ClientWrapper(metadata, needleConstructorStub);
-    return expect(needleConstructorStub.defaults.user_agent).to.equal(expectedCallArgs.user_agent);
-  });
-
 });

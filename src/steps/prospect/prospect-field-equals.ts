@@ -4,7 +4,7 @@ import { Step, RunStepResponse, FieldDefinition, StepDefinition } from '../../pr
 // tslint:disable:no-else-after-return
 export class ProspectFieldEquals extends BaseStep implements StepInterface {
 
-  protected stepName: string = 'Create a Pardot Prospect';
+  protected stepName: string = 'Validate a Pardot Prospect field';
   protected stepExpression: string = 'the (?<field>[a-zA-Z0-9_]+) field on pardot prospect (?<email>.+) should be (?<expectedValue>.+)';
   protected stepType: StepDefinition.Type = StepDefinition.Type.VALIDATION;
   protected expectedFields: Field[] = [{
@@ -30,11 +30,7 @@ export class ProspectFieldEquals extends BaseStep implements StepInterface {
     try {
       const response = await this.client.readByEmail(email);
 
-      if (Array.isArray(response.prospect)) {
-        return this.error('The email %s matched multiple prospects', [email]);
-      }
-
-      const prospect = response.prospect;
+      const prospect = Array.isArray(response) ? response[0] : response;
 
       if (!prospect) {
         return this.error('No prospect found with email %s', [email]);

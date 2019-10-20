@@ -17,6 +17,10 @@ export class CreateProspect extends BaseStep implements StepInterface {
     const prospect: any = stepData.prospect;
 
     try {
+      if (!prospect.hasOwnProperty('email')) {
+        return this.error('An email address must be provided in order to create a Pardot prospect');
+      }
+
       const result = await this.client.createProspect(prospect);
       return this.pass('Successfully created Prospect with ID %s', [result.prospect.id]);
     } catch (e) {

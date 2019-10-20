@@ -27,12 +27,12 @@ class ClientWrapper {
       clientConstructor({
         email: auth.get('email').toString(),
         password: auth.get('password').toString(),
-        userKey: auth.get('userKey').toString()
+        userKey: auth.get('userKey').toString(),
       }).then((client) => {
         this.client = client;
         resolve(true);
       }).fail((err) => {
-        reject('Auth Error: ' + err);
+        reject(`Auth Error: ${err}`);
       });
     });
 
