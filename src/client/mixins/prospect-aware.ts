@@ -19,7 +19,7 @@ export class ProspectAwareMixin {
     const prospectId = Array.isArray(prospects) ? prospects.map(f => f.id)[0] : prospects.id;
 
     return new Promise((resolve, reject) => {
-      this.client.prospects(prospectId).then(resolve).fail(reject);
+      this.client.prospects.deleteById(prospectId).then(resolve).fail(reject);
     });
   }
 
