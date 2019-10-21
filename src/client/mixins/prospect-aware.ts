@@ -14,12 +14,10 @@ export class ProspectAwareMixin {
   public async deleteProspectByEmail(email: string) {
     await this.clientReady;
 
-    const prospects: any = await this.readByEmail(email);
-
-    const prospectId = Array.isArray(prospects) ? prospects.map(f => f.id)[0] : prospects.id;
+    const prospect: any = await this.readByEmail(email);
 
     return new Promise((resolve, reject) => {
-      this.client.prospects.deleteById(prospectId).then(resolve).fail(reject);
+      this.client.prospects.deleteById(prospect.id).then(resolve).fail(reject);
     });
   }
 
@@ -32,7 +30,7 @@ export class ProspectAwareMixin {
 
         if (Array.isArray(prospects)) {
           resolve(prospects.sort(
-            (a, b) => new Date(a['created_at']) < new Date(b['created_at']) ? 1 : -1));
+            (a, b) => new Date(a['created_at']) < new Date(b['created_at']) ? 1 : -1)[0]);
         } else {
           resolve(prospects);
         }

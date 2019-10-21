@@ -28,9 +28,7 @@ export class ProspectFieldEquals extends BaseStep implements StepInterface {
     const expectedValue: any = stepData.expectedValue;
 
     try {
-      const response = await this.client.readByEmail(email);
-
-      const prospect = Array.isArray(response) ? response[0] : response;
+      const prospect = await this.client.readByEmail(email);
 
       if (!prospect) {
         return this.error('No prospect found with email %s', [email]);

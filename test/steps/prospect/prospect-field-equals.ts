@@ -53,68 +53,6 @@ describe('ProspectFieldEqualsStep', () => {
 
   describe('ExecuteStep', () => {
 
-    describe('Email matched multiple prospects', () => {
-      beforeEach(() => {
-        clientWrapperStub.readByEmail.returns(Promise.resolve(
-          [
-            { email: 'test@pardot.com' },
-            { email: 'random@pardot.com' },
-          ],
-        ));
-      });
-
-      describe('Expected Value equals Actual Value', () => {
-        const expectedValues = {
-          email: 'test@pardot.com',
-          field: 'email',
-          expectedValue: 'test@pardot.com',
-        };
-
-        beforeEach(() => {
-          protoStep.setData(Struct.fromJavaScript(expectedValues));
-        });
-
-        it('should respond with pass', async () => {
-          const response = await stepUnderTest.executeStep(protoStep);
-          expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.PASSED);
-        });
-      });
-
-      describe('Field Not Found', () => {
-        const expectedValues = {
-          email: 'test@pardot.com',
-          field: 'no_such_field',
-          expectedValue: 'test@pardot.com',
-        };
-
-        beforeEach(() => {
-          protoStep.setData(Struct.fromJavaScript(expectedValues));
-        });
-
-        it('should respond with error', async () => {
-          const response = await stepUnderTest.executeStep(protoStep);
-          expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.ERROR);
-        });
-      });
-
-      describe('Expected Value not equal Actual Value', () => {
-        const expectedValues = {
-          email: 'test@pardot.com',
-          field: 'email',
-          expectedValue: 'wrong@pardot.com',
-        };
-
-        beforeEach(() => {
-          protoStep.setData(Struct.fromJavaScript(expectedValues));
-        });
-
-        it('should respond with fail', async () => {
-          const response = await stepUnderTest.executeStep(protoStep);
-          expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.FAILED);
-        });
-      });
-    });
-
     describe('Email matched single prospect', () => {
       beforeEach(() => {
         clientWrapperStub.readByEmail.returns(Promise.resolve(
