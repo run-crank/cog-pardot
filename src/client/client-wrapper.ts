@@ -9,11 +9,11 @@ class ClientWrapper {
     field: 'email',
     type: FieldDefinition.Type.EMAIL,
     description: 'Email address',
-  },{
+  }, {
     field: 'password',
     type: FieldDefinition.Type.STRING,
-    description: 'Email address',
-  },{
+    description: 'Password',
+  }, {
     field: 'userKey',
     type: FieldDefinition.Type.STRING,
     description: 'User key',
