@@ -57,7 +57,7 @@
   "dependencies": {
     "google-protobuf": "^3.8.0",
     "grpc": "^1.21.1",
-    "lew-pardot": "git+https://github.com/iamEAP/lew-pardot.git#240769ed",
+    "lew-pardot": "https://codeload.github.com/iamEAP/lew-pardot/tar.gz/240769ed",
     "ts-node": "^8.3.0"
   }
 }
