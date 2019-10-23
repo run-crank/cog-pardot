@@ -38,10 +38,17 @@ describe('Cog:GetManifest', () => {
         return field.toObject();
       });
 
-      // Useragent auth field
-      const ua: any = authFields.filter(a => a.key === 'userAgent')[0];
-      expect(ua.type).to.equal(FieldDefinition.Type.STRING);
-      expect(ua.optionality).to.equal(FieldDefinition.Optionality.REQUIRED);
+      const email: any = authFields.filter(a => a.key === 'email')[0];
+      expect(email.type).to.equal(FieldDefinition.Type.EMAIL);
+      expect(email.optionality).to.equal(FieldDefinition.Optionality.REQUIRED);
+
+      const password: any = authFields.filter(a => a.key === 'password')[0];
+      expect(password.type).to.equal(FieldDefinition.Type.STRING);
+      expect(password.optionality).to.equal(FieldDefinition.Optionality.REQUIRED);
+
+      const key: any = authFields.filter(a => a.key === 'userKey')[0];
+      expect(key.type).to.equal(FieldDefinition.Type.STRING);
+      expect(key.optionality).to.equal(FieldDefinition.Optionality.REQUIRED);
 
       done();
     });
