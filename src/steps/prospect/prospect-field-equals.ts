@@ -4,7 +4,7 @@ import { Step, RunStepResponse, FieldDefinition, StepDefinition } from '../../pr
 // tslint:disable:no-else-after-return
 export class ProspectFieldEquals extends BaseStep implements StepInterface {
 
-  protected stepName: string = 'Validate a Pardot Prospect field';
+  protected stepName: string = 'Check a field on Pardot Prospect';
   protected stepExpression: string = 'the (?<field>[a-zA-Z0-9_]+) field on pardot prospect (?<email>.+) should be (?<expectedValue>.+)';
   protected stepType: StepDefinition.Type = StepDefinition.Type.VALIDATION;
   protected expectedFields: Field[] = [{
@@ -14,11 +14,11 @@ export class ProspectFieldEquals extends BaseStep implements StepInterface {
   }, {
     field: 'field',
     type: FieldDefinition.Type.STRING,
-    description: 'A map of field names to field values',
+    description: 'Field name to check',
   }, {
     field: 'expectedValue',
     type: FieldDefinition.Type.ANYSCALAR,
-    description: 'A map of field names to field values',
+    description: 'Expected field value',
   }];
 
   async executeStep(step: Step): Promise<RunStepResponse> {
