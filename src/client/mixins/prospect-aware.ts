@@ -1,7 +1,7 @@
-import * as pardot from 'lew-pardot';
+import * as Pardot from '../pardot-wrapper';
 
 export class ProspectAwareMixin {
-  public client: pardot;
+  public client: Pardot.PardotClient;
   public clientReady: Promise<boolean>;
   public retry: any;
 
@@ -9,45 +9,17 @@ export class ProspectAwareMixin {
 
   public async createProspect(prospect: Record<string, any>) {
     await this.clientReady;
-
-    const promise = new Promise((resolve, reject) => {
-      this.client.prospects.create(prospect.email, prospect)
-      .then(resolve)
-      .fail(reject);
-    });
-
-    return this.attempt(promise, 5);
+    return this.attempt(this.client.prospects.create(prospect.email, prospect), 5);
   }
 
   public async deleteProspectByEmail(email: string) {
     await this.clientReady;
-
     const prospect: any = await this.readByEmail(email);
-
-    const promise = new Promise((resolve, reject) => {
-      this.client.prospects.deleteById(prospect.id).then(resolve).fail(reject);
-    });
-
-    return this.attempt(promise);
+    return this.attempt(this.client.prospects.deleteById(prospect.id));
   }
 
   public async readByEmail(email: string) {
     await this.clientReady;
-
-    const promise = new Promise((resolve, reject) => {
-      this.client.prospects.readByEmail(email).then((response) => {
-        const prospects = response.prospect;
-
-        if (Array.isArray(prospects)) {
-          resolve(prospects.sort(
-            (a, b) => new Date(a['created_at']) < new Date(b['created_at']) ? 1 : -1)[0]);
-        } else {
-          resolve(prospects);
-        }
-
-      }).fail(reject);
-    });
-
-    return this.attempt(promise);
+    return this.attempt(this.client.prospects.readByEmail(email));
   }
 }

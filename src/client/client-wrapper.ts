@@ -4,6 +4,7 @@ import * as Retry from 'retry';
 import { Field } from '../core/base-step';
 import { FieldDefinition } from '../proto/cog_pb';
 import { ProspectAwareMixin } from './mixins';
+import { Pardot, PardotClient } from './pardot-wrapper';
 
 class ClientWrapper {
   public static expectedAuthFields: Field[] = [{
@@ -21,7 +22,7 @@ class ClientWrapper {
   }];
 
   public retry: any;
-  public client: pardot;
+  public client: PardotClient;
   public clientReady: Promise<boolean>;
 
   public LOGIN_ERROR_CODE: number = 15;
@@ -29,18 +30,17 @@ class ClientWrapper {
   public TIMEOUT: number = 60 * 1000;
   public MAX_CONCURRENT_REQUEST_ERROR_CODE: number = 66;
 
-  constructor (auth: grpc.Metadata, clientConstructor = pardot, retry = Retry) {
+  constructor (auth: grpc.Metadata, clientConstructor = Pardot, retry = Retry) {
     this.retry = retry;
 
     this.clientReady = new Promise((resolve, reject) => {
-      clientConstructor({
-        email: auth.get('email').toString(),
-        password: auth.get('password').toString(),
-        userKey: auth.get('userKey').toString(),
-      }).then((client: any) => {
+      new clientConstructor().auth(
+        auth.get('email').toString(),
+        auth.get('password').toString(),
+        auth.get('userKey').toString()).then((client: PardotClient) => {
         this.client = client;
         resolve(true);
-      }).fail((err: any) => {
+      }).catch((err: any) => {
         if (err.code === this.LOGIN_ERROR_CODE) {
           reject('Login failed. Please check your auth credentials and try again.');
         } else if (err.code === this.DAILY_API_LIMIT_EXCEEDED_ERROR_CODE) {
