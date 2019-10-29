@@ -1,7 +1,6 @@
 import * as pardot from 'lew-pardot';
 
 export class Pardot {
-
   public auth(email: string, password: string, userKey: string): Promise<any> {
     return new Promise((resolve, reject) => {
       pardot({
