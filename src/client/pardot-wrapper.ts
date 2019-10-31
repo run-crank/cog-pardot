@@ -24,10 +24,12 @@ export class PardotClient {
   constructor(private client: any) {}
 
   public prospects = {
-    create: (email, prospect) =>
-       new Promise((resolve, reject) =>
+    create: (email, prospect) => {
+      console.log('Fn level', email, prospect);
+      return new Promise((resolve, reject) =>
        this.client.prospects.create(email, prospect).then(resolve).fail(reject),
-     ),
+     );
+    },
     deleteById: id =>
        new Promise((resolve, reject) =>
        this.client.prospects.deleteById(id).then(resolve).fail(reject),

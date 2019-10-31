@@ -50,7 +50,7 @@ class ClientWrapper {
     });
   }
 
-  public async attempt(promise: Promise<any>, retryCount: number = 1) {
+  public async attempt(fn: (...params) => Promise<any>, retryCount = 1, ...params) {
     const operation = this.retry.operation({
       retries: retryCount,
       maxTimeout: this.TIMEOUT,
@@ -58,7 +58,7 @@ class ClientWrapper {
 
     return new Promise((resolve, reject) => {
       operation.attempt((currentAttempt: number) => {
-        promise.then(resolve)
+        fn(...params).then(resolve)
         .catch((err: Error) => {
           // tslint:disable-next-line:max-line-length
           const shouldRetry = err['code'] === this.MAX_CONCURRENT_REQUEST_ERROR_CODE && currentAttempt - 1 !== retryCount;
