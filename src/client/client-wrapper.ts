@@ -4,7 +4,6 @@ import * as Retry from 'retry';
 import { Field } from '../core/base-step';
 import { FieldDefinition } from '../proto/cog_pb';
 import { ProspectAwareMixin } from './mixins';
-import { Pardot, PardotClient } from './pardot-wrapper';
 
 class ClientWrapper {
   public static expectedAuthFields: Field[] = [{
@@ -22,7 +21,7 @@ class ClientWrapper {
   }];
 
   public retry: any;
-  public client: PardotClient;
+  public client: any;
   public clientReady: Promise<boolean>;
 
   public LOGIN_ERROR_CODE: number = 15;
@@ -30,27 +29,30 @@ class ClientWrapper {
   public TIMEOUT: number = 60 * 1000;
   public MAX_CONCURRENT_REQUEST_ERROR_CODE: number = 66;
 
-  constructor (auth: grpc.Metadata, clientConstructor = Pardot, retry = Retry) {
+  constructor (auth: grpc.Metadata, clientConstructor = pardot, retry = Retry) {
     this.retry = retry;
 
     this.clientReady = new Promise((resolve, reject) => {
-      new clientConstructor().auth(
-        auth.get('email').toString(),
-        auth.get('password').toString(),
-        auth.get('userKey').toString()).then((client: PardotClient) => {
+      clientConstructor({
+        email: auth.get('email').toString(),
+        password: auth.get('password').toString(),
+        userKey: auth.get('userKey').toString(),
+      }).then((client: any) => {
         this.client = client;
         resolve(true);
-      }).catch((err: any) => {
+      }).fail((err: any) => {
         if (err.code === this.LOGIN_ERROR_CODE) {
           reject('Login failed. Please check your auth credentials and try again.');
         } else if (err.code === this.DAILY_API_LIMIT_EXCEEDED_ERROR_CODE) {
           reject('API call limit reached for today.');
         }
+
+        reject(err);
       });
     });
   }
 
-  public async attempt(fn: (...params) => Promise<any>, retryCount = 1, ...params) {
+  public async attempt(fn: () => Promise<any>, retryCount = 1) {
     const operation = this.retry.operation({
       retries: retryCount,
       maxTimeout: this.TIMEOUT,
@@ -58,7 +60,7 @@ class ClientWrapper {
 
     return new Promise((resolve, reject) => {
       operation.attempt((currentAttempt: number) => {
-        fn(...params).then(resolve)
+        fn().then(resolve)
         .catch((err: Error) => {
           // tslint:disable-next-line:max-line-length
           const shouldRetry = err['code'] === this.MAX_CONCURRENT_REQUEST_ERROR_CODE && currentAttempt - 1 !== retryCount;
