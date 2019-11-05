@@ -26,7 +26,7 @@ describe('ProspectFieldEqualsStep', () => {
     it('should return expected step metadata', () => {
       const stepDef: StepDefinition = stepUnderTest.getDefinition();
       expect(stepDef.getStepId()).to.equal('ProspectFieldEquals');
-      expect(stepDef.getName()).to.equal('Check a field on Pardot Prospect');
+      expect(stepDef.getName()).to.equal('Check a field on a Pardot Prospect');
       expect(stepDef.getExpression()).to.equal('the (?<field>[a-zA-Z0-9_]+) field on pardot prospect (?<email>.+) should be (?<expectedValue>.+)');
       expect(stepDef.getType()).to.equal(StepDefinition.Type.VALIDATION);
     });
