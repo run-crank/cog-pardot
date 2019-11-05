@@ -1,5 +1,6 @@
 import * as grpc from 'grpc';
 import * as pardot from 'lew-pardot';
+import * as Retry from 'retry';
 import { Field } from '../core/base-step';
 import { FieldDefinition } from '../proto/cog_pb';
 import { ProspectAwareMixin } from './mixins';
@@ -19,25 +20,59 @@ class ClientWrapper {
     description: 'User key',
   }];
 
-  public client: pardot;
+  public retry: any;
+  public client: any;
   public clientReady: Promise<boolean>;
 
-  constructor (auth: grpc.Metadata, clientConstructor = pardot) {
+  public LOGIN_ERROR_CODE: number = 15;
+  public DAILY_API_LIMIT_EXCEEDED_ERROR_CODE: number = 122;
+  public TIMEOUT: number = 60 * 1000;
+  public MAX_CONCURRENT_REQUEST_ERROR_CODE: number = 66;
+
+  constructor (auth: grpc.Metadata, clientConstructor = pardot, retry = Retry) {
+    this.retry = retry;
+
     this.clientReady = new Promise((resolve, reject) => {
       clientConstructor({
         email: auth.get('email').toString(),
         password: auth.get('password').toString(),
         userKey: auth.get('userKey').toString(),
-      }).then((client) => {
+      }).then((client: any) => {
         this.client = client;
         resolve(true);
-      }).fail((err) => {
-        reject(`Auth Error: ${err}`);
+      }).fail((err: any) => {
+        if (err.code === this.LOGIN_ERROR_CODE) {
+          reject('Login failed. Please check your auth credentials and try again.');
+        } else if (err.code === this.DAILY_API_LIMIT_EXCEEDED_ERROR_CODE) {
+          reject('API call limit reached for today.');
+        }
+
+        reject(err);
       });
     });
-
   }
 
+  public async attempt(fn: () => Promise<any>, retryCount = 1) {
+    const operation = this.retry.operation({
+      retries: retryCount,
+      maxTimeout: this.TIMEOUT,
+    });
+
+    return new Promise((resolve, reject) => {
+      operation.attempt((currentAttempt: number) => {
+        fn().then(resolve)
+        .catch((err: Error) => {
+          // tslint:disable-next-line:max-line-length
+          const shouldRetry = err['code'] === this.MAX_CONCURRENT_REQUEST_ERROR_CODE && currentAttempt - 1 !== retryCount;
+          if (shouldRetry) {
+            operation.retry(err);
+          } else {
+            reject(err);
+          }
+        });
+      });
+    });
+  }
 }
 
 interface ClientWrapper extends ProspectAwareMixin {}

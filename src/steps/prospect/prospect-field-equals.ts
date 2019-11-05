@@ -4,7 +4,7 @@ import { Step, RunStepResponse, FieldDefinition, StepDefinition } from '../../pr
 // tslint:disable:no-else-after-return
 export class ProspectFieldEquals extends BaseStep implements StepInterface {
 
-  protected stepName: string = 'Check a field on Pardot Prospect';
+  protected stepName: string = 'Check a field on a Pardot Prospect';
   protected stepExpression: string = 'the (?<field>[a-zA-Z0-9_]+) field on pardot prospect (?<email>.+) should be (?<expectedValue>.+)';
   protected stepType: StepDefinition.Type = StepDefinition.Type.VALIDATION;
   protected expectedFields: Field[] = [{
