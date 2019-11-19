@@ -27,6 +27,23 @@ Note: You can always re-authenticate later.
 ### Authentication
 <!-- run `crank cog:readme automatoninc/pardot` to update -->
 <!-- authenticationDetails -->
+You will be asked for the following authentication details on installation. To avoid prompts in a CI/CD context, you can provide the same details as environment variables.
+
+| Field | Install-Time Environment Variable | Description |
+| --- | --- | --- |
+| **email** | `CRANK_AUTOMATONINC_PARDOT__EMAIL` | Email address |
+| **password** | `CRANK_AUTOMATONINC_PARDOT__PASSWORD` | Password |
+| **userKey** | `CRANK_AUTOMATONINC_PARDOT__USERKEY` | User key |
+
+```shell-session
+# Re-authenticate by running this
+$ crank cog:auth automatoninc/pardot
+```
+<!-- authenticationDetailsEnd -->
+
+API user keys are available in Pardot under `{your email address}` > Settings
+in the API User Key row. In accounts with Salesforce User Sync enabled,
+you must authenticate with a Pardot-only user. SSO users aren't supported.
 
 ### Steps
 Once installed, the following steps will be available for use in any of your
@@ -34,6 +51,12 @@ Scenario files.
 
 <!-- run `crank cog:readme automatoninc/pardot` to update -->
 <!-- stepDetails -->
+| Name (ID) | Expression | Expected Data |
+| --- | --- | --- |
+| **Create a Pardot Prospect**<br>(`CreateProspect`) | `create a pardot prospect` | - `prospect`: A map of field names to field values |
+| **Delete a Pardot Prospect**<br>(`DeleteProspect`) | `delete the (?<email>.+) pardot prospect` | - `email`: Email address |
+| **Check a field on a Pardot Prospect**<br>(`ProspectFieldEquals`) | `the (?<field>[a-zA-Z0-9_]+) field on pardot prospect (?<email>.+) should be (?<expectedValue>.+)` | - `email`: Prospect's email address <br><br>- `field`: Field name to check <br><br>- `expectedValue`: Expected field value |
+<!-- stepDetailsEnd -->
 
 ## Development and Contributing
 Pull requests are welcome. For major changes, please open an issue first to

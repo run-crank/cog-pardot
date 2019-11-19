@@ -6,8 +6,8 @@
   "cog": {
     "name": "automatoninc/pardot",
     "label": "Pardot",
-    "homepage": "",
-    "authHelpUrl": ""
+    "homepage": "https://github.com/run-crank/cog-pardot",
+    "authHelpUrl": "https://github.com/run-crank/cog-pardot#authentication"
   },
   "scripts": {
     "build-docker": "docker build -t automatoninc/pardot:$npm_package_version -t automatoninc/pardot:latest .",
