@@ -2,7 +2,7 @@ scenario: Pardot API Test
 description: This test the creation and validation of field in Pardot.
 
 steps:
-- step: create a pardot prospect
+- step: Create a pardot prospect
   data:
     prospect:
         first_name: Rosan

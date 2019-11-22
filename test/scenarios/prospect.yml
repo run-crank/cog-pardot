@@ -5,9 +5,9 @@ steps:
 - step: create a pardot prospect
   data:
     prospect:
-        email: test@pardot.com
+        email: test@thisisjust.atomatest.com
         first_name: Pardot
         last_name: Test
-- step: the first_name field on pardot prospect test@pardot.com should be Pardot
-- step: the last_name field on pardot prospect test@pardot.com should be Test
-- step: delete the test@pardot.com pardot prospect
+- step: the first_name field on pardot prospect test@thisisjust.atomatest.com should be Pardot
+- step: the last_name field on pardot prospect test@thisisjust.atomatest.com should be Test
+- step: delete the test@thisisjust.atomatest.com pardot prospect
