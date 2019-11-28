@@ -5,7 +5,7 @@ import { Step, RunStepResponse, FieldDefinition, StepDefinition } from '../../pr
 export class ProspectFieldEquals extends BaseStep implements StepInterface {
 
   protected stepName: string = 'Check a field on a Pardot Prospect';
-  protected stepExpression: string = 'the (?<field>[a-zA-Z0-9_]+) field on pardot prospect (?<email>.+) should be (?<expectedValue>.+)';
+  protected stepExpression: string = 'the (?<field>[a-zA-Z0-9_]+) field on pardot prospect (?<email>.+) should (?<operator>be less than|be greater than|be|contain|not be|not contain) (?<expectedValue>.+)';
   protected stepType: StepDefinition.Type = StepDefinition.Type.VALIDATION;
   protected expectedFields: Field[] = [{
     field: 'email',
@@ -15,6 +15,11 @@ export class ProspectFieldEquals extends BaseStep implements StepInterface {
     field: 'field',
     type: FieldDefinition.Type.STRING,
     description: 'Field name to check',
+  }, {
+    field: 'operator',
+    type: FieldDefinition.Type.STRING,
+    description: 'Field name to check',
+    optionality: FieldDefinition.Optionality.OPTIONAL,
   }, {
     field: 'expectedValue',
     type: FieldDefinition.Type.ANYSCALAR,
@@ -26,6 +31,7 @@ export class ProspectFieldEquals extends BaseStep implements StepInterface {
     const email: any = stepData.email;
     const field: any = stepData.field;
     const expectedValue: any = stepData.expectedValue;
+    const operator = stepData.operator || 'be';
 
     try {
       const prospect = await this.client.readByEmail(email);
@@ -38,14 +44,14 @@ export class ProspectFieldEquals extends BaseStep implements StepInterface {
           email,
         ]);
       // tslint:disable-next-line:triple-equals
-      } else if (prospect[field] == expectedValue) {
-        return this.pass('The %s field was set to %s, as expected', [
+      } else if (this.compare(operator, prospect[field], expectedValue)) {
+        return this.pass(this.operatorSuccessMessages[operator.replace(/\s/g, '').toLowerCase()], [
           field,
           prospect[field],
         ]);
       }
 
-      return this.fail('Expected %s field to be %s, but it was actually %s', [
+      return this.fail(this.operatorFailMessages[operator.replace(/\s/g, '').toLowerCase()], [
         field,
         expectedValue,
         prospect[field],
