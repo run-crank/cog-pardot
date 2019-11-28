@@ -27,7 +27,7 @@ describe('ProspectFieldEqualsStep', () => {
       const stepDef: StepDefinition = stepUnderTest.getDefinition();
       expect(stepDef.getStepId()).to.equal('ProspectFieldEquals');
       expect(stepDef.getName()).to.equal('Check a field on a Pardot Prospect');
-      expect(stepDef.getExpression()).to.equal('the (?<field>[a-zA-Z0-9_]+) field on pardot prospect (?<email>.+) should be (?<expectedValue>.+)');
+      expect(stepDef.getExpression()).to.equal('the (?<field>[a-zA-Z0-9_]+) field on pardot prospect (?<email>.+) should (?<operator>be less than|be greater than|be|contain|not be|not contain) (?<expectedValue>.+)');
       expect(stepDef.getType()).to.equal(StepDefinition.Type.VALIDATION);
     });
 
@@ -45,9 +45,13 @@ describe('ProspectFieldEqualsStep', () => {
       expect(fields[1].optionality).to.equal(FieldDefinition.Optionality.REQUIRED);
       expect(fields[1].type).to.equal(FieldDefinition.Type.STRING);
 
-      expect(fields[2].key).to.equal('expectedValue');
-      expect(fields[2].optionality).to.equal(FieldDefinition.Optionality.REQUIRED);
-      expect(fields[2].type).to.equal(FieldDefinition.Type.ANYSCALAR);
+      expect(fields[2].key).to.equal('operator');
+      expect(fields[2].optionality).to.equal(FieldDefinition.Optionality.OPTIONAL);
+      expect(fields[2].type).to.equal(FieldDefinition.Type.STRING);
+
+      expect(fields[3].key).to.equal('expectedValue');
+      expect(fields[3].optionality).to.equal(FieldDefinition.Optionality.REQUIRED);
+      expect(fields[3].type).to.equal(FieldDefinition.Type.ANYSCALAR);
     });
   });
 
