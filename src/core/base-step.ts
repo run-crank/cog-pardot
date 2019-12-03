@@ -2,6 +2,9 @@ import { StepDefinition, FieldDefinition, Step as PbStep, RunStepResponse } from
 import { Value } from 'google-protobuf/google/protobuf/struct_pb';
 import * as moment from 'moment';
 
+// tslint:disable:triple-equals
+// tslint:disable:no-else-after-return
+
 export interface StepInterface {
   getId(): string;
   getDefinition(): StepDefinition;
