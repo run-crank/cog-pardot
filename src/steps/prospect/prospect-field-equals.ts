@@ -18,7 +18,7 @@ export class ProspectFieldEquals extends BaseStep implements StepInterface {
   }, {
     field: 'operator',
     type: FieldDefinition.Type.STRING,
-    description: 'Field name to check',
+    description: 'Check Logic',
     optionality: FieldDefinition.Optionality.OPTIONAL,
   }, {
     field: 'expectedValue',
@@ -47,7 +47,7 @@ export class ProspectFieldEquals extends BaseStep implements StepInterface {
       } else if (this.compare(operator, prospect[field], expectedValue)) {
         return this.pass(this.operatorSuccessMessages[operator.replace(/\s/g, '').toLowerCase()], [
           field,
-          prospect[field],
+          expectedValue,
         ]);
       }
 
