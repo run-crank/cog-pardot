@@ -47,13 +47,13 @@ export class ProspectFieldEquals extends BaseStep implements StepInterface {
         ]);
       // tslint:disable-next-line:triple-equals
       } else if (this.compare(operator, prospect[field], expectedValue)) {
-        return this.pass(this.operatorSuccessMessages[operator.replace(/\s/g, '').toLowerCase()], [
+        return this.pass(this.operatorSuccessMessages[], [
           field,
           expectedValue,
         ]);
       }
 
-      return this.fail(this.operatorFailMessages[operator.replace(/\s/g, '').toLowerCase()], [
+      return this.fail(this.operatorFailMessages[], [
         field,
         expectedValue,
         prospect[field],
