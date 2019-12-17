@@ -20,7 +20,7 @@ export class ProspectFieldEquals extends BaseStep implements StepInterface {
   }, {
     field: 'operator',
     type: FieldDefinition.Type.STRING,
-    description: 'Check Logic',
+    description: 'Check Logic (be, not be, contain, not contain, be greater than, or be less than)',
     optionality: FieldDefinition.Optionality.OPTIONAL,
   }, {
     field: 'expectedValue',
@@ -47,13 +47,13 @@ export class ProspectFieldEquals extends BaseStep implements StepInterface {
         ]);
       // tslint:disable-next-line:triple-equals
       } else if (this.compare(operator, prospect[field], expectedValue)) {
-        return this.pass(this.operatorSuccessMessages[operator.replace(/\s/g, '').toLowerCase()], [
+        return this.pass(this.operatorSuccessMessages[operator], [
           field,
           expectedValue,
         ]);
       }
 
-      return this.fail(this.operatorFailMessages[operator.replace(/\s/g, '').toLowerCase()], [
+      return this.fail(this.operatorFailMessages[operator], [
         field,
         expectedValue,
         prospect[field],
