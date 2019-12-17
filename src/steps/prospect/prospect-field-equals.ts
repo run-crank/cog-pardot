@@ -20,7 +20,7 @@ export class ProspectFieldEquals extends BaseStep implements StepInterface {
   }, {
     field: 'operator',
     type: FieldDefinition.Type.STRING,
-    description: 'Check Logic',
+    description: 'Check Logic (be, not be, contain, not contain, be greater than, or be less than)',
     optionality: FieldDefinition.Optionality.OPTIONAL,
   }, {
     field: 'expectedValue',
