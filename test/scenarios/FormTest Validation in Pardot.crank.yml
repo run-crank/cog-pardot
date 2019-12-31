@@ -1,0 +1,26 @@
+scenario: Creation of Lead from Web and validation of fields in Pardot
+description: This test does the Lead creation from Web and validates fields in Pardot
+
+tokens:
+  test:
+    email: pardotroan@thisisjust.atomatest.com
+    lastname: Patty
+    firstname: Krabby
+    company: Yeah corp
+  
+steps:
+- step: Navigate to http://go.pardot.com/l/811013/2019-10-16/3mxyx?utm_source=SomeValue&utm_medium=AnotherValue&utm_campaign=YetAnotherValue
+- step: Fill out input[id="811013_16117pi_811013_16117"] with {{test.firstname}}
+- step: Fill out input[id="811013_16119pi_811013_16119"] with {{test.lastname}}
+- step: Fill out input[id="811013_16121pi_811013_16121"] with {{test.company}}
+- step: Fill out input[id="811013_16123pi_811013_16123"] with {{test.email}}
+- step: Click the page element [type="submit"]
+- waitFor: 10
+  step: Validate that the email field on pardot prospect {{test.email}} should be {{test.email}}
+- step: Validate that the last_name field on pardot prospect {{test.email}} should be {{test.lastname}}
+- step: Validate that the first_name field on pardot prospect {{test.email}} should be {{test.firstname}}
+- step: Validate that the company field on pardot prospect {{test.email}} should be {{test.company}}
+- step: Validate that the utm_source field on pardot prospect {{test.email}} should be SomeValue
+- step: Validate that the utm_medium field on pardot prospect {{test.email}} should be AnotherValue
+- waitFor: 10
+  step: Delete the {{test.email}} Pardot prospect
