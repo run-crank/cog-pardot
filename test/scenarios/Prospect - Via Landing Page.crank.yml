@@ -1,0 +1,27 @@
+scenario: Prospect Creation from Landing Page
+description: >
+  Tests that a Prospect created via landing page can be checked in Pardot.
+
+tokens:
+  test:
+    email: pardotroan@thisisjust.atomatest.com
+    lastname: Patty
+    firstname: Krabby
+    company: Yeah corp
+  
+steps:
+- step: Given I navigate to http://go.pardot.com/l/811013/2019-10-16/3mxyx?utm_source=SomeValue&utm_medium=AnotherValue&utm_campaign=YetAnotherValue
+- step: When I fill out input[id="811013_16117pi_811013_16117"] with {{test.firstname}}
+- step: And I fill out input[id="811013_16119pi_811013_16119"] with {{test.lastname}}
+- step: And I fill out input[id="811013_16121pi_811013_16121"] with {{test.company}}
+- step: And I fill out input[id="811013_16123pi_811013_16123"] with {{test.email}}
+- step: And I click the page element [type="submit"]
+- step: Then the email field on pardot prospect {{test.email}} should be {{test.email}}
+  failAfter: 10
+- step: And the last_name field on pardot prospect {{test.email}} should be {{test.lastname}}
+- step: And the first_name field on pardot prospect {{test.email}} should be {{test.firstname}}
+- step: And the company field on pardot prospect {{test.email}} should be {{test.company}}
+- step: And the utm_source field on pardot prospect {{test.email}} should be SomeValue
+- step: And the utm_medium field on pardot prospect {{test.email}} should be AnotherValue
+- step: Finally, Delete the {{test.email}} Pardot prospect
+  failAfter: 10
