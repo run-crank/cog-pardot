@@ -60,7 +60,7 @@ describe('ProspectFieldEqualsStep', () => {
     describe('Email matched single prospect', () => {
       beforeEach(() => {
         clientWrapperStub.readByEmail.returns(Promise.resolve(
-            { email: 'test@pardot.com' },
+            { email: 'test@pardot.com', age: 25 },
         ));
       });
 
@@ -112,6 +112,36 @@ describe('ProspectFieldEqualsStep', () => {
         it('should respond with fail', async () => {
           const response = await stepUnderTest.executeStep(protoStep);
           expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.FAILED);
+        });
+      });
+
+      describe('Unknown Operator', () => {
+        const fields = {
+          email: 'test@pardot.com',
+          field: 'email',
+          expectedValue: 'wrong@pardot.com',
+          operator: 'unknown operator',
+        };
+
+        it('should respond with error', async () => {
+          protoStep.setData(Struct.fromJavaScript(fields));
+          const response = await stepUnderTest.executeStep(protoStep);
+          expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.ERROR);
+        });
+      });
+
+      describe('Invalid Operand', () => {
+        const fields = {
+          email: 'test@pardot.com',
+          field: 'age',
+          expectedValue: 'nonNumeric',
+          operator: 'be greater than',
+        };
+
+        it('should respond with error', async () => {
+          protoStep.setData(Struct.fromJavaScript(fields));
+          const response = await stepUnderTest.executeStep(protoStep);
+          expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.ERROR);
         });
       });
     });
