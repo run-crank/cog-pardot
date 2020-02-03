@@ -10,6 +10,7 @@ class ClientWrapper {
     field: 'email',
     type: FieldDefinition.Type.EMAIL,
     description: 'Email address',
+    help: "This is your (or an API user's) email address. This user must be a Pardot-only user (no SSO or Salesforce User sync users may be used).",
   }, {
     field: 'password',
     type: FieldDefinition.Type.STRING,
@@ -18,6 +19,7 @@ class ClientWrapper {
     field: 'userKey',
     type: FieldDefinition.Type.STRING,
     description: 'User key',
+    help: 'You can find your API User Key about halfway down the page on the "My Profile" tab of your settings: https://pi.pardot.com/account/user',
   }];
 
   public retry: any;
