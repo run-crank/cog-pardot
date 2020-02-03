@@ -15,6 +15,7 @@ export interface Field {
   field: string;
   type: FieldDefinition.Type;
   description: string;
+  help?: string;
   optionality?: number;
 }
 
@@ -24,6 +25,7 @@ export abstract class BaseStep {
   protected stepExpression: string;
   protected stepType: StepDefinition.Type;
   protected expectedFields: Field[];
+  protected stepHelp?: string;
 
   public operatorFailMessages;
   public operatorSuccessMessages;
@@ -43,6 +45,10 @@ export abstract class BaseStep {
     stepDefinition.setName(this.stepName);
     stepDefinition.setType(this.stepType);
     stepDefinition.setExpression(this.stepExpression);
+
+    if (this.stepHelp) {
+      stepDefinition.setHelp(this.stepHelp);
+    }
 
     this.expectedFields.forEach((field: Field) => {
       const expectedField = new FieldDefinition();
