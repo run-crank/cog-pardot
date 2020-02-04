@@ -1,0 +1,18 @@
+scenario: Pardot API with operators Test
+description: This tests the operators when checking fields of a Pardot Prospect. 
+
+steps:
+- step: When I create a pardot prospect
+  data:
+    prospect:
+        first_name: Rosan
+        last_name: Angeles
+        email: pardotapiros@thisisjust.atomatest.com
+        company: HS Corp
+        is_do_not_email: 1
+- step: Then that the email field on Pardot prospect pardotapiros@thisisjust.atomatest.com should be pardotapiros@thisisjust.atomatest.com
+- step: And the first_name field on Pardot prospect pardotapiros@thisisjust.atomatest.com should not be Roan
+- step: And the last_name field on Pardot prospect pardotapiros@thisisjust.atomatest.com should contain Angel
+- step: And the is_do_not_email field on Pardot prospect pardotapiros@thisisjust.atomatest.com should be greater than 0
+- step: And the created_at field on pardot prospect pardotapiros@thisisjust.atomatest.com should be less than 2023-08-09
+- step: Finally, delete the pardotapiros@thisisjust.atomatest.com Pardot prospect.
