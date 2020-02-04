@@ -41,6 +41,7 @@ describe('Cog:GetManifest', () => {
       const email: any = authFields.filter(a => a.key === 'email')[0];
       expect(email.type).to.equal(FieldDefinition.Type.EMAIL);
       expect(email.optionality).to.equal(FieldDefinition.Optionality.REQUIRED);
+      expect(!!email.help).to.equal(true);
 
       const password: any = authFields.filter(a => a.key === 'password')[0];
       expect(password.type).to.equal(FieldDefinition.Type.STRING);
@@ -49,6 +50,7 @@ describe('Cog:GetManifest', () => {
       const key: any = authFields.filter(a => a.key === 'userKey')[0];
       expect(key.type).to.equal(FieldDefinition.Type.STRING);
       expect(key.optionality).to.equal(FieldDefinition.Optionality.REQUIRED);
+      expect(!!key.help).to.equal(true);
 
       done();
     });

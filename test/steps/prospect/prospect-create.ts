@@ -4,7 +4,7 @@ import { default as sinon } from 'ts-sinon';
 import * as sinonChai from 'sinon-chai';
 import 'mocha';
 
-import { Step as ProtoStep, StepDefinition, FieldDefinition, RunStepResponse } from '../../../src/proto/cog_pb';
+import { Step as ProtoStep, StepDefinition, FieldDefinition, RunStepResponse, RecordDefinition } from '../../../src/proto/cog_pb';
 import { Step } from '../../../src/steps/prospect/prospect-create';
 
 chai.use(sinonChai);
@@ -41,6 +41,26 @@ describe('CreateProspectStep', () => {
       expect(fields[0].optionality).to.equal(FieldDefinition.Optionality.REQUIRED);
       expect(fields[0].type).to.equal(FieldDefinition.Type.MAP);
     });
+
+    it('should return expected step records', () => {
+      const stepDef: StepDefinition = stepUnderTest.getDefinition();
+      const records: any[] = stepDef.getExpectedRecordsList().map((record: RecordDefinition) => {
+        return record.toObject();
+      });
+
+      expect(records[0].id).to.equal('prospect');
+      expect(records[0].type).to.equal(RecordDefinition.Type.KEYVALUE);
+      expect(records[0].mayHaveMoreFields).to.equal(true);
+
+      const idField = records[0].guaranteedFieldsList.filter(f => f.key === 'id')[0];
+      expect(idField.type == FieldDefinition.Type.NUMERIC);
+      const emailField = records[0].guaranteedFieldsList.filter(f => f.key === 'email')[0];
+      expect(emailField.type == FieldDefinition.Type.EMAIL);
+      const createField = records[0].guaranteedFieldsList.filter(f => f.key === 'created_at')[0];
+      expect(createField.type == FieldDefinition.Type.DATETIME);
+      const updateField = records[0].guaranteedFieldsList.filter(f => f.key === 'updated_at')[0];
+      expect(updateField.type == FieldDefinition.Type.DATETIME);
+    });
   });
 
   describe('ExecuteStep', () => {
@@ -63,6 +83,7 @@ describe('CreateProspectStep', () => {
     });
 
     describe('Prospect created', () => {
+      const prospectResponse = { prospect: { id: 18792341 } };
       const expectedProspect = {
         email: 'test@pardot.com',
         first_name: 'Pardot',
@@ -70,7 +91,7 @@ describe('CreateProspectStep', () => {
       };
 
       beforeEach(() => {
-        clientWrapperStub.createProspect.returns(Promise.resolve({ prospect: { id: 18792341 } }));
+        clientWrapperStub.createProspect.returns(Promise.resolve(prospectResponse));
         protoStep.setData(Struct.fromJavaScript({
           prospect: expectedProspect,
         }));
@@ -79,6 +100,7 @@ describe('CreateProspectStep', () => {
       it('should call respond with pass', async () => {
         const response = await stepUnderTest.executeStep(protoStep);
         expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.PASSED);
+        expect(response.getRecordsList()[0].getKeyValue().toJavaScript()).to.deep.equal(prospectResponse.prospect);
       });
     });
 
