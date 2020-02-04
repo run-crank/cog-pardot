@@ -1,5 +1,5 @@
-import { BaseStep, Field, StepInterface } from '../../core/base-step';
-import { Step, RunStepResponse, FieldDefinition, StepDefinition } from '../../proto/cog_pb';
+import { BaseStep, Field, StepInterface, ExpectedRecord } from '../../core/base-step';
+import { Step, RunStepResponse, FieldDefinition, StepDefinition, RecordDefinition } from '../../proto/cog_pb';
 import * as util from '@run-crank/utilities';
 import { baseOperators } from '../../client/constants/operators';
 
@@ -27,6 +27,28 @@ export class ProspectFieldEquals extends BaseStep implements StepInterface {
     type: FieldDefinition.Type.ANYSCALAR,
     description: 'Expected field value',
   }];
+  protected expectedRecords: ExpectedRecord[] = [{
+    id: 'prospect',
+    type: RecordDefinition.Type.KEYVALUE,
+    fields: [{
+      field: 'id',
+      type: FieldDefinition.Type.NUMERIC,
+      description: "Prospect's Pardot ID",
+    }, {
+      field: 'email',
+      type: FieldDefinition.Type.EMAIL,
+      description: "Prospect's Email Address",
+    }, {
+      field: 'created_at',
+      type: FieldDefinition.Type.DATETIME,
+      description: 'The date/time the Prospect was created',
+    }, {
+      field: 'updated_at',
+      type: FieldDefinition.Type.DATETIME,
+      description: 'The date/time the Prospect was updated',
+    }],
+    dynamicFields: true,
+  }];
 
   async executeStep(step: Step): Promise<RunStepResponse> {
     const stepData: any = step.getData().toJavaScript();
@@ -40,24 +62,17 @@ export class ProspectFieldEquals extends BaseStep implements StepInterface {
 
       if (!prospect) {
         return this.error('No prospect found with email %s', [email]);
-      } else if (!prospect.hasOwnProperty(field)) {
-        return this.error('The %s field does not exist on Prospect %s', [
-          field,
-          email,
-        ]);
-      // tslint:disable-next-line:triple-equals
-      } else if (this.compare(operator, prospect[field], expectedValue)) {
-        return this.pass(this.operatorSuccessMessages[operator], [
-          field,
-          expectedValue,
-        ]);
       }
 
-      return this.fail(this.operatorFailMessages[operator], [
-        field,
-        expectedValue,
-        prospect[field],
-      ]);
+      const prospectRecord = this.keyValue('prospect', 'Checked Prospect', prospect);
+      if (!prospect.hasOwnProperty(field)) {
+        return this.error('The %s field does not exist on Prospect %s', [field, email], [prospectRecord]);
+      // tslint:disable-next-line:triple-equals
+      } else if (this.compare(operator, prospect[field], expectedValue)) {
+        return this.pass(this.operatorSuccessMessages[operator], [field, expectedValue], [prospectRecord]);
+      }
+
+      return this.fail(this.operatorFailMessages[operator], [field, expectedValue, prospect[field]], [prospectRecord]);
     } catch (e) {
       if (e instanceof util.UnknownOperatorError) {
         return this.error('%s Please provide one of: %s', [e.message, baseOperators.join(', ')]);
