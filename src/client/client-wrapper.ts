@@ -3,7 +3,7 @@ import * as pardot from 'lew-pardot';
 import * as Retry from 'retry';
 import { Field } from '../core/base-step';
 import { FieldDefinition } from '../proto/cog_pb';
-import { ProspectAwareMixin } from './mixins';
+import { ListMembershipAware, ProspectAwareMixin } from './mixins';
 
 class ClientWrapper {
   public static expectedAuthFields: Field[] = [{
@@ -77,8 +77,8 @@ class ClientWrapper {
   }
 }
 
-interface ClientWrapper extends ProspectAwareMixin {}
-applyMixins(ClientWrapper, [ProspectAwareMixin]);
+interface ClientWrapper extends ProspectAwareMixin, ListMembershipAware {}
+applyMixins(ClientWrapper, [ProspectAwareMixin, ListMembershipAware]);
 
 function applyMixins(derivedCtor: any, baseCtors: any[]) {
   baseCtors.forEach((baseCtor) => {

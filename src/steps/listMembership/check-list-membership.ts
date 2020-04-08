@@ -1,0 +1,125 @@
+import { BaseStep, ExpectedRecord, Field, StepInterface } from '../../core/base-step';
+import { Step, RunStepResponse, FieldDefinition, StepDefinition, RecordDefinition } from '../../proto/cog_pb';
+
+export class CheckListMembership extends BaseStep implements StepInterface {
+
+  protected stepName: string = 'Check Pardot List Membership';
+  protected stepExpression: string = 'the (?<email>.+) pardot prospect should (?<optInOut>(be opted in to|be opted out of|not be a member of)) list (?<listId>.+)';
+  protected stepType: StepDefinition.Type = StepDefinition.Type.VALIDATION;
+  protected expectedFields: Field[] = [{
+    field: 'email',
+    type: FieldDefinition.Type.EMAIL,
+    description: 'The Email Address of the Prospect',
+  }, {
+    field: 'optInOut',
+    type: FieldDefinition.Type.STRING,
+    description: 'One of "be opted in to", "be opted out of", or "not be a member of"',
+  }, {
+    field: 'listId',
+    type: FieldDefinition.Type.NUMERIC,
+    description: 'The ID of the Pardot List',
+  }];
+  protected expectedRecords: ExpectedRecord[] = [{
+    id: 'listMembership',
+    type: RecordDefinition.Type.KEYVALUE,
+    fields: [{
+      field: 'id',
+      type: FieldDefinition.Type.NUMERIC,
+      description: "List Membership's Pardot ID",
+    }, {
+      field: 'list_id',
+      type: FieldDefinition.Type.NUMERIC,
+      description: "List's Pardot ID",
+    }, {
+      field: 'prospect_id',
+      type: FieldDefinition.Type.NUMERIC,
+      description: "Prospect's Pardot ID",
+    }, {
+      field: 'opted_out',
+      type: FieldDefinition.Type.BOOLEAN,
+      description: 'Opted Out',
+    }, {
+      field: 'created_at',
+      type: FieldDefinition.Type.DATETIME,
+      description: 'The date created',
+    }, {
+      field: 'updated_at',
+      type: FieldDefinition.Type.DATETIME,
+      description: 'The date updated',
+    }],
+    dynamicFields: true,
+  }];
+
+  async executeStep(step: Step): Promise<RunStepResponse> {
+    const stepData: any = step.getData().toJavaScript();
+    const email = stepData.email;
+    const optInOut = stepData.optInOut;
+    const listId = stepData.listId;
+    let record;
+
+    try {
+      const prospect = await this.client.readByEmail(email);
+
+      if (!prospect) {
+        return this.error('No prospect found with email %s', [email]);
+      }
+
+      const listMembership = (await this.client.readByListIdAndProspectId(listId, prospect.id)).list_membership;
+
+      if (listMembership) {
+        record = this.keyValue('listMembership', 'List Membership', listMembership);
+      }
+
+      if (optInOut === 'not be a member of') {
+        if (!listMembership) {
+          return this.pass(
+            'Prospect %s is not a member of %d, as expected.',
+            [email, listId],
+          );
+        } else {
+          return this.fail(
+            'Expected prospect %s to not be a member of list %d, but a list membership was found',
+            [email, listId],
+            [record],
+          );
+        }
+      }
+
+      if (optInOut === 'be opted in to') {
+        if (listMembership.opted_out) {
+          return this.fail(
+            'Expected prospect %s to be opted in to list %d, but the prospect is opted out.',
+            [email, listId],
+            [record],
+          );
+        } else {
+          return this.pass(
+            'Prospect %s is opted in to list %s, as expected.',
+            [email, listId],
+            [record],
+          );
+        }
+      } else if (optInOut === 'be opted out of') {
+        if (listMembership.opted_out) {
+          return this.pass(
+            'Prospect %s is opted out of list %s, as expected.',
+            [email, listId],
+            [record],
+          );
+        } else {
+          return this.fail(
+            'Expected prospect %s to be opted out of list %d, but the prospect is opted in.',
+            [email, listId],
+            [record],
+          );
+        }
+      }
+
+      return this.pass('XD');
+    } catch (e) {
+      return this.error('There was a problem checking list membership: %s', [e.toString()]);
+    }
+  }
+}
+
+export { CheckListMembership as Step };

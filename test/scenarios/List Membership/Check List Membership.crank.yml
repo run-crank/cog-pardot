@@ -1,0 +1,8 @@
+scenario: Check List Membership
+description: >
+  This validates if a prospect is a member of a list
+
+steps:
+# - step: Then the clm@thisisjust.atomatest.com pardot prospect should be opted in to list 20395
+# - step: Then the clm@thisisjust.atomatest.com pardot prospect should be opted out of list 20395
+- step: Then the clm@thisisjust.atomatest.com pardot prospect should not be a member of list 20395
