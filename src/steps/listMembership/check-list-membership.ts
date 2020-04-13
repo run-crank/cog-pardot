@@ -93,7 +93,15 @@ export class CheckListMembership extends BaseStep implements StepInterface {
     } catch (e) {
       //// This means that the List ID provided does not exist
       if (e.message === 'Invalid ID') {
-        return this.error('No list found with ID %d', [listId]);
+        if (optInOut === 'not be a member of') {
+          return this.pass(
+            'Prospect %s is not a member of %d, as expected.',
+            [email, listId],
+            [prospectRecord],
+          );
+        }
+
+        return this.error('No list found with ID %d', [listId], [prospectRecord]);
       }
 
       return this.error('There was a problem checking list membership: %s', [e.toString()]);
@@ -102,19 +110,11 @@ export class CheckListMembership extends BaseStep implements StepInterface {
     listMembershipRecord = this.keyValue('listMembership', 'List Membership', listMembership);
 
     if (optInOut === 'not be a member of') {
-      if (!listMembership) {
-        return this.pass(
-          'Prospect %s is not a member of %d, as expected.',
-          [email, listId],
-          [prospectRecord],
-        );
-      } else {
-        return this.fail(
-          'Expected prospect %s to not be a member of list %d, but a list membership was found',
-          [email, listId],
-          [prospectRecord, listMembershipRecord],
-        );
-      }
+      return this.fail(
+        'Expected prospect %s to not be a member of list %d, but a list membership was found',
+        [email, listId],
+        [prospectRecord, listMembershipRecord],
+      );
     }
 
     if (optInOut === 'be opted in to') {
