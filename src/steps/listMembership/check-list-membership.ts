@@ -78,69 +78,73 @@ export class CheckListMembership extends BaseStep implements StepInterface {
     const listId = stepData.listId;
     let listMembershipRecord;
     let prospectRecord;
+    let listMembership;
+
+    const prospect = await this.client.readByEmail(email);
+
+    if (!prospect) {
+      return this.error('No prospect found with email %s', [email]);
+    }
+
+    prospectRecord = this.keyValue('prospect', 'Checked Prospect', prospect);
 
     try {
-      const prospect = await this.client.readByEmail(email);
-
-      if (!prospect) {
-        return this.error('No prospect found with email %s', [email]);
-      }
-
-      prospectRecord = this.keyValue('prospect', 'Checked Prospect', prospect);
-
-      const listMembership = (await this.client.readByListIdAndProspectId(listId, prospect.id)).list_membership;
-
-      if (listMembership) {
-        listMembershipRecord = this.keyValue('listMembership', 'List Membership', listMembership);
-      }
-
-      if (optInOut === 'not be a member of') {
-        if (!listMembership) {
+      listMembership = (await this.client.readByListIdAndProspectId(listId, prospect.id)).list_membership;
+    } catch (e) {
+      //// This means that the List ID provided does not exist
+      if (e.message === 'Invalid ID') {
+        if (optInOut === 'not be a member of') {
           return this.pass(
             'Prospect %s is not a member of %d, as expected.',
             [email, listId],
             [prospectRecord],
           );
-        } else {
-          return this.fail(
-            'Expected prospect %s to not be a member of list %d, but a list membership was found',
-            [email, listId],
-            [prospectRecord, listMembershipRecord],
-          );
         }
+
+        return this.error('No list found with ID %d', [listId], [prospectRecord]);
       }
 
-      if (optInOut === 'be opted in to') {
-        if (listMembership.opted_out) {
-          return this.fail(
-            'Expected prospect %s to be opted in to list %d, but the prospect is opted out.',
-            [email, listId],
-            [prospectRecord, listMembershipRecord],
-          );
-        } else {
-          return this.pass(
-            'Prospect %s is opted in to list %s, as expected.',
-            [email, listId],
-            [prospectRecord, listMembershipRecord],
-          );
-        }
-      } else if (optInOut === 'be opted out of') {
-        if (listMembership.opted_out) {
-          return this.pass(
-            'Prospect %s is opted out of list %s, as expected.',
-            [email, listId],
-            [prospectRecord, listMembershipRecord],
-          );
-        } else {
-          return this.fail(
-            'Expected prospect %s to be opted out of list %d, but the prospect is opted in.',
-            [email, listId],
-            [prospectRecord, listMembershipRecord],
-          );
-        }
-      }
-    } catch (e) {
       return this.error('There was a problem checking list membership: %s', [e.toString()]);
+    }
+
+    listMembershipRecord = this.keyValue('listMembership', 'List Membership', listMembership);
+
+    if (optInOut === 'not be a member of') {
+      return this.fail(
+        'Expected prospect %s to not be a member of list %d, but a list membership was found',
+        [email, listId],
+        [prospectRecord, listMembershipRecord],
+      );
+    }
+
+    if (optInOut === 'be opted in to') {
+      if (listMembership.opted_out) {
+        return this.fail(
+          'Expected prospect %s to be opted in to list %d, but the prospect is opted out.',
+          [email, listId],
+          [prospectRecord, listMembershipRecord],
+        );
+      } else {
+        return this.pass(
+          'Prospect %s is opted in to list %s, as expected.',
+          [email, listId],
+          [prospectRecord, listMembershipRecord],
+        );
+      }
+    } else if (optInOut === 'be opted out of') {
+      if (listMembership.opted_out) {
+        return this.pass(
+          'Prospect %s is opted out of list %s, as expected.',
+          [email, listId],
+          [prospectRecord, listMembershipRecord],
+        );
+      } else {
+        return this.fail(
+          'Expected prospect %s to be opted out of list %d, but the prospect is opted in.',
+          [email, listId],
+          [prospectRecord, listMembershipRecord],
+        );
+      }
     }
   }
 }
