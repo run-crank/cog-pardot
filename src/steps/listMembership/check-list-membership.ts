@@ -4,7 +4,7 @@ import { Step, RunStepResponse, FieldDefinition, StepDefinition, RecordDefinitio
 export class CheckListMembership extends BaseStep implements StepInterface {
 
   protected stepName: string = 'Check Pardot List Membership';
-  protected stepExpression: string = 'the (?<email>.+) pardot prospect should (?<optInOut>(be opted in to|be opted out of|not be a member of)) list (?<listId>.+)';
+  protected stepExpression: string = 'the (?<email>.+) pardot prospect should (?<optInOut>be opted in to|be opted out of|not be a member of) list (?<listId>.+)';
   protected stepType: StepDefinition.Type = StepDefinition.Type.VALIDATION;
   protected expectedFields: Field[] = [{
     field: 'email',
