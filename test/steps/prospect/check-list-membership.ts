@@ -28,7 +28,7 @@ describe('CheckListMembership', () => {
       const stepDef: StepDefinition = stepUnderTest.getDefinition();
       expect(stepDef.getStepId()).to.equal('CheckListMembership');
       expect(stepDef.getName()).to.equal('Check Pardot List Membership');
-      expect(stepDef.getExpression()).to.equal('the (?<email>.+) pardot prospect should (?<optInOut>(be opted in to|be opted out of|not be a member of)) list (?<listId>.+)');
+      expect(stepDef.getExpression()).to.equal('the (?<email>.+) pardot prospect should (?<optInOut>be opted in to|be opted out of|not be a member of) list (?<listId>.+)');
       expect(stepDef.getType()).to.equal(StepDefinition.Type.VALIDATION);
     });
 
