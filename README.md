@@ -53,6 +53,7 @@ Scenario files.
 <!-- stepDetails -->
 | Name (ID) | Expression | Expected Data |
 | --- | --- | --- |
+| **Check Pardot List Membership**<br>(`CheckListMembership`) | `the (?<email>.+) pardot prospect should (?<optInOut>be opted in to\|be opted out of\|not be a member of) list (?<listId>.+)` | - `email`: The Email Address of the Prospect <br><br>- `optInOut`: One of "be opted in to", "be opted out of", or "not be a member of" <br><br>- `listId`: The ID of the Pardot List |
 | **Create a Pardot Prospect**<br>(`CreateProspect`) | `create a pardot prospect` | - `prospect`: A map of field names to field values |
 | **Delete a Pardot Prospect**<br>(`DeleteProspect`) | `delete the (?<email>.+) pardot prospect` | - `email`: Email address |
 | **Check a field on a Pardot Prospect**<br>(`ProspectFieldEquals`) | `the (?<field>[a-zA-Z0-9_]+) field on pardot prospect (?<email>.+) should (?<operator>be less than\|be greater than\|be\|contain\|not be\|not contain) (?<expectedValue>.+)` | - `email`: Prospect's email address <br><br>- `field`: Field name to check <br><br>- `operator`: Check Logic (be, not be, contain, not contain, be greater than, or be less than) <br><br>- `expectedValue`: Expected field value |
