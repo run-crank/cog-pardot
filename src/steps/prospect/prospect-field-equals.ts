@@ -2,12 +2,13 @@ import { BaseStep, Field, StepInterface, ExpectedRecord } from '../../core/base-
 import { Step, RunStepResponse, FieldDefinition, StepDefinition, RecordDefinition } from '../../proto/cog_pb';
 import * as util from '@run-crank/utilities';
 import { baseOperators } from '../../client/constants/operators';
+import { isNullOrUndefined } from 'util';
 
 // tslint:disable:no-else-after-return
 export class ProspectFieldEquals extends BaseStep implements StepInterface {
 
   protected stepName: string = 'Check a field on a Pardot Prospect';
-  protected stepExpression: string = 'the (?<field>[a-zA-Z0-9_]+) field on pardot prospect (?<email>.+) should (?<operator>be less than|be greater than|be|contain|not be|not contain) (?<expectedValue>.+)';
+  protected stepExpression: string = 'the (?<field>[a-zA-Z0-9_]+) field on pardot prospect (?<email>.+) should (?<operator>be set|not be set|be less than|be greater than|be one of|be|contain|not be one of|not be|not contain) ?(?<expectedValue>.+)?';
   protected stepType: StepDefinition.Type = StepDefinition.Type.VALIDATION;
   protected expectedFields: Field[] = [{
     field: 'email',
@@ -20,12 +21,13 @@ export class ProspectFieldEquals extends BaseStep implements StepInterface {
   }, {
     field: 'operator',
     type: FieldDefinition.Type.STRING,
-    description: 'Check Logic (be, not be, contain, not contain, be greater than, or be less than)',
+    description: 'Check Logic (be, not be, contain, not contain, be greater than, be less than, be set, not be set, be one of, or not be one of)',
     optionality: FieldDefinition.Optionality.OPTIONAL,
   }, {
     field: 'expectedValue',
     type: FieldDefinition.Type.ANYSCALAR,
     description: 'Expected field value',
+    optionality: FieldDefinition.Optionality.OPTIONAL,
   }];
   protected expectedRecords: ExpectedRecord[] = [{
     id: 'prospect',
@@ -57,6 +59,10 @@ export class ProspectFieldEquals extends BaseStep implements StepInterface {
     const expectedValue: any = stepData.expectedValue;
     const operator = stepData.operator || 'be';
 
+    if (isNullOrUndefined(expectedValue) && !(operator == 'be set' || operator == 'not be set')) {
+      return this.error("The operator '%s' requires an expected value. Please provide one.", [operator]);
+    }
+
     try {
       const prospect = await this.client.readByEmail(email);
 
@@ -65,14 +71,16 @@ export class ProspectFieldEquals extends BaseStep implements StepInterface {
       }
 
       const prospectRecord = this.keyValue('prospect', 'Checked Prospect', prospect);
+
       if (!prospect.hasOwnProperty(field)) {
         return this.error('The %s field does not exist on Prospect %s', [field, email], [prospectRecord]);
-      // tslint:disable-next-line:triple-equals
-      } else if (this.compare(operator, prospect[field], expectedValue)) {
-        return this.pass(this.operatorSuccessMessages[operator], [field, expectedValue], [prospectRecord]);
       }
 
-      return this.fail(this.operatorFailMessages[operator], [field, expectedValue, prospect[field]], [prospectRecord]);
+      const result = this.assert(operator, prospect[field], expectedValue, field);
+
+      return result.valid ? this.pass(result.message, [], [prospectRecord])
+        : this.fail(result.message, [], [prospectRecord]);
+
     } catch (e) {
       if (e instanceof util.UnknownOperatorError) {
         return this.error('%s Please provide one of: %s', [e.message, baseOperators.join(', ')]);
