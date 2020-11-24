@@ -83,7 +83,7 @@ export class CheckListMembership extends BaseStep implements StepInterface {
     const prospect = await this.client.readByEmail(email);
 
     if (!prospect) {
-      return this.error('No prospect found with email %s', [email]);
+      return this.fail('No prospect found with email %s', [email]);
     }
 
     prospectRecord = this.keyValue('prospect', 'Checked Prospect', prospect);
@@ -101,7 +101,7 @@ export class CheckListMembership extends BaseStep implements StepInterface {
           );
         }
 
-        return this.error('No list found with ID %d', [listId], [prospectRecord]);
+        return this.fail('No list found with ID %d', [listId], [prospectRecord]);
       }
 
       return this.error('There was a problem checking list membership: %s', [e.toString()]);

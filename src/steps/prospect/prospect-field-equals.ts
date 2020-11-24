@@ -67,13 +67,13 @@ export class ProspectFieldEquals extends BaseStep implements StepInterface {
       const prospect = await this.client.readByEmail(email);
 
       if (!prospect) {
-        return this.error('No prospect found with email %s', [email]);
+        return this.fail('No prospect found with email %s', [email]);
       }
 
       const prospectRecord = this.keyValue('prospect', 'Checked Prospect', prospect);
 
       if (!prospect.hasOwnProperty(field)) {
-        return this.error('The %s field does not exist on Prospect %s', [field, email], [prospectRecord]);
+        return this.fail('The %s field does not exist on Prospect %s', [field, email], [prospectRecord]);
       }
 
       const result = this.assert(operator, prospect[field], expectedValue, field);
