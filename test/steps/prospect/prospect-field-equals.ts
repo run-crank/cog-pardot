@@ -116,7 +116,7 @@ describe('ProspectFieldEqualsStep', () => {
 
         it('should respond with error', async () => {
           const response = await stepUnderTest.executeStep(protoStep);
-          expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.ERROR);
+          expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.FAILED);
           expect(response.getRecordsList()[0].getKeyValue().toJavaScript()).to.deep.equal(actualProspect);
         });
       });
@@ -183,7 +183,7 @@ describe('ProspectFieldEqualsStep', () => {
 
       it('should respond with error', async () => {
         const response = await stepUnderTest.executeStep(protoStep);
-        expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.ERROR);
+        expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.FAILED);
       });
     });
 
