@@ -58,8 +58,8 @@ class ClientWrapper {
     }
     this.retry = retry;
 
-     // User/Password OAuth2 Resource Owner Credential Flow
-     if (auth.get('clientSecret') && auth.get('password')) {
+    // User/Password OAuth2 Resource Owner Credential Flow
+    if (auth.get('clientSecret') && auth.get('password')) {
       // Construct the connection.
       this.client = new clientConstructor.Connection({
         oauth2: {
