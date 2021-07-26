@@ -1,5 +1,5 @@
 import * as grpc from 'grpc';
-import * as pardot from 'lew-pardot';
+import * as jsforce from 'jsforce';
 import * as Retry from 'retry';
 import { Field } from '../core/base-step';
 import { FieldDefinition } from '../proto/cog_pb';
@@ -7,73 +7,84 @@ import { ListMembershipAware, ProspectAwareMixin } from './mixins';
 
 class ClientWrapper {
   public static expectedAuthFields: Field[] = [{
-    field: 'email',
-    type: FieldDefinition.Type.EMAIL,
-    description: 'Email address',
-    help: "This is your (or an API user's) email address. This user must be a Pardot-only user (no SSO or Salesforce User sync users may be used).",
+    field: 'instanceUrl',
+    type: FieldDefinition.Type.URL,
+    description: 'Login/Instance URL (e.g. https://na1.salesforce.com)',
+  }, {
+    field: 'clientId',
+    type: FieldDefinition.Type.STRING,
+    description: 'OAuth2 Client ID',
+  }, {
+    field: 'clientSecret',
+    type: FieldDefinition.Type.STRING,
+    description: 'OAuth2 Client Secret',
+  }, {
+    field: 'username',
+    type: FieldDefinition.Type.STRING,
+    description: 'Username',
   }, {
     field: 'password',
     type: FieldDefinition.Type.STRING,
     description: 'Password',
-  }, {
-    field: 'userKey',
-    type: FieldDefinition.Type.STRING,
-    description: 'User key',
-    help: 'You can find your API User Key about halfway down the page on the "My Profile" tab of your settings: https://pi.pardot.com/account/user',
   }];
 
   public retry: any;
-  public client: any;
+  public client: jsforce.Connection;
   public clientReady: Promise<boolean>;
 
-  public LOGIN_ERROR_CODE: number = 15;
-  public DAILY_API_LIMIT_EXCEEDED_ERROR_CODE: number = 122;
-  public TIMEOUT: number = 60 * 1000;
-  public MAX_CONCURRENT_REQUEST_ERROR_CODE: number = 66;
-
-  constructor (auth: grpc.Metadata, clientConstructor = pardot, retry = Retry) {
-    this.retry = retry;
-
-    this.clientReady = new Promise((resolve, reject) => {
-      clientConstructor({
-        email: auth.get('email').toString(),
-        password: auth.get('password').toString(),
-        userKey: auth.get('userKey').toString(),
-      }).then((client: any) => {
-        this.client = client;
-        resolve(true);
-      }).fail((err: any) => {
-        if (err.code === this.LOGIN_ERROR_CODE) {
-          reject('Login failed. Please check your auth credentials and try again.');
-        } else if (err.code === this.DAILY_API_LIMIT_EXCEEDED_ERROR_CODE) {
-          reject('API call limit reached for today.');
-        }
-
-        reject(err);
+  constructor (auth: grpc.Metadata, clientConstructor = jsforce, retry = Retry) {
+    // Support non-UN/PW OAuth under the hood.
+    if (auth.get('refreshToken').toString() && auth.get('accessToken').toString()) {
+      this.client = new clientConstructor.Connection({
+        oauth2: {
+          clientId: auth.get('clientId').toString(),
+          clientSecret: auth.get('clientSecret').toString(),
+          loginUrl: auth.get('instanceUrl').toString() || 'https://login.salesforce.com',
+        },
+        instanceUrl: auth.get('instanceUrl').toString(),
+        accessToken: auth.get('accessToken').toString(),
+        refreshToken: auth.get('refreshToken').toString(),
       });
-    });
-  }
-
-  public async attempt(fn: () => Promise<any>, retryCount = 1) {
-    const operation = this.retry.operation({
-      retries: retryCount,
-      maxTimeout: this.TIMEOUT,
-    });
-
-    return new Promise((resolve, reject) => {
-      operation.attempt((currentAttempt: number) => {
-        fn().then(resolve)
-        .catch((err: Error) => {
-          // tslint:disable-next-line:max-line-length
-          const shouldRetry = err['code'] === this.MAX_CONCURRENT_REQUEST_ERROR_CODE && currentAttempt - 1 !== retryCount;
-          if (shouldRetry) {
-            operation.retry(err);
-          } else {
-            reject(err);
+      this.clientReady = new Promise((resolve, reject) => {
+        this.client.oauth2.refreshToken(auth.get('refreshToken').toString(), (err, results) => {
+          if (err) {
+            return reject(`Auth Error: ${err.toString()}`);
           }
+          this.client.accessToken = results.access_token;
+          resolve(true);
         });
       });
-    });
+      return;
+    }
+    this.retry = retry;
+
+    // User/Password OAuth2 Resource Owner Credential Flow
+    if (auth.get('clientSecret') && auth.get('password')) {
+      // Construct the connection.
+      this.client = new clientConstructor.Connection({
+        oauth2: {
+          loginUrl: auth.get('instanceUrl').toString(),
+          clientId: auth.get('clientId').toString(),
+          clientSecret: auth.get('clientSecret').toString(),
+        },
+      });
+
+      // Wraps the async login function in a way that ensures steps can wait
+      // until the client is actually authenticated.
+      this.clientReady = new Promise((resolve, reject) => {
+        // Login using the username/password.
+        this.client.login(
+          auth.get('username').toString(),
+          auth.get('password').toString(),
+          (err, userInfo) => {
+            if (err) {
+              return reject(`Auth Error: ${err.toString()}`);
+            }
+            resolve(true);
+          },
+        );
+      });
+    }
   }
 }
 
