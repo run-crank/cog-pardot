@@ -11,7 +11,7 @@ class ClientWrapper {
     field: 'pardotUrl',
     type: FieldDefinition.Type.STRING,
     description: 'Your pardot URL.',
-    help: 'If you use a sandbox or developer account, your url is "pi.demo.pardot.com", if you use a production instance, it is "pi.pardot.com"',
+    help: 'If you use a sandbox or developer account, your url is ".pardot.com", if you use a production instance, it is "pi.pardot.com"',
   }, {
     field: 'email',
     type: FieldDefinition.Type.EMAIL,
@@ -55,7 +55,7 @@ class ClientWrapper {
     this.client = axios;
     this.host = auth.get('pardotUrl');
 
-    if (auth.get('pardotUrl').includes('pi.demo.pardot.com')) {
+    if (auth.get('pardotUrl').includes('demo')) {
       this.loginUrl = 'https://test.salesforce.com/services/oauth2/token';
     } else {
       this.loginUrl = 'https://login.salesforce.com/services/oauth2/token';
