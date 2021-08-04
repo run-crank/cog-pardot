@@ -59,7 +59,7 @@
     "@types/retry": "^0.12.0",
     "axios": "^0.21.1",
     "google-protobuf": "^3.8.0",
-    "grpc": "^1.21.1",
+    "grpc": "^1.24.11",
     "jsforce": "^1.10.1",
     "lew-pardot": "https://codeload.github.com/iamEAP/lew-pardot/tar.gz/240769ed",
     "moment": "^2.24.0",
