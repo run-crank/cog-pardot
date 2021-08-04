@@ -19,8 +19,8 @@ export class ProspectAwareMixin {
             'Pardot-Business-Unit-Id': this.businessUnitId,
           },
           params: {
+            prospect,
             email: prospect.email,
-            prospect: { prospect },
           },
         }).then(resolve).catch(reject);
       });
@@ -51,7 +51,7 @@ export class ProspectAwareMixin {
         this.client.get(`/api/prospect/version/4/do/read/email/${email}`, {
           headers: {
             'Host': this.host,
-            'Authorization': this.access_token,
+            'Authorization': this.accessToken,
             'Pardot-Business-Unit-Id': this.businessUnitId,
           },
         }).then((response) => {
