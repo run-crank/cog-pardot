@@ -55,7 +55,7 @@ class ClientWrapper {
     this.client = axios;
     this.host = auth.get('pardotUrl');
 
-    if (auth.get('pardotUrl').includes('demo')) {
+    if (auth.get('pardotUrl').includes('demo') || auth.get('pardotUrl').includes('test')) {
       this.loginUrl = 'https://test.salesforce.com/services/oauth2/token';
     } else {
       this.loginUrl = 'https://login.salesforce.com/services/oauth2/token';
