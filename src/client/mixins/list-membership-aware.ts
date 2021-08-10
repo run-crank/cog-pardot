@@ -5,6 +5,7 @@ export class ListMembershipAware {
   public clientReady: Promise<boolean>;
   public retry: any;
   public accessToken: any;
+  public pardotUrl: any;
   public host: any;
   public businessUnitId: any;
 
@@ -14,13 +15,14 @@ export class ListMembershipAware {
     await this.clientReady;
     return this.attempt(() => {
       return new Promise((resolve, reject) => {
-        this.client.get(`/api/listMembership/version/4/do/read/list_id/${listId}/prospect_id/${prospectId}`, {
+        this.client.get(`https://${this.pardotUrl}/api/listMembership/version/4/do/read/list_id/${listId}/prospect_id/${prospectId}?format=json`, {
           headers: {
-            'Host': this.host,
             'Authorization': this.accessToken,
             'Pardot-Business-Unit-Id': this.businessUnitId,
           },
-        }).then(resolve).catch(reject);
+        }).then((res) => {
+          resolve(res.data);
+        }).catch(reject);
       });
     });
   }
