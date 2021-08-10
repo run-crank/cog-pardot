@@ -10,7 +10,7 @@ class ClientWrapper {
   public static expectedAuthFields: Field[] = [{
     field: 'pardotUrl',
     type: FieldDefinition.Type.STRING,
-    description: 'Your Pardot Domain (If you are on a developer or sandbox, enter "pi.demo.pardot.com", otherwise enter "pi.pardot.com")',
+    description: 'Your Pardot Domain (If you are on a developer or sandbox account, enter "pi.demo.pardot.com", otherwise enter "pi.pardot.com")',
     help: 'If you use a sandbox or developer account, your url is "pi.demo.pardot.com", if you use a production instance, it is "pi.pardot.com"',
   }, {
     field: 'email',
