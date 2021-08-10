@@ -10,7 +10,7 @@ class ClientWrapper {
   public static expectedAuthFields: Field[] = [{
     field: 'pardotUrl',
     type: FieldDefinition.Type.STRING,
-    description: 'Your pardot URL.',
+    description: 'Your Pardot Domain (If you are on a developer or sandbox account, enter "pi.demo.pardot.com", otherwise enter "pi.pardot.com")',
     help: 'If you use a sandbox or developer account, your url is "pi.demo.pardot.com", if you use a production instance, it is "pi.pardot.com"',
   }, {
     field: 'email',
@@ -41,7 +41,7 @@ class ClientWrapper {
   public client: any;
   public clientReady: Promise<boolean>;
   public loginUrl: any;
-  public host: any;
+  public pardotUrl: any;
   public accessToken: any;
   public businessUnitId: any;
 
@@ -53,27 +53,27 @@ class ClientWrapper {
   constructor (auth: grpc.Metadata, clientConstructor = axios, retry = Retry) {
     this.retry = retry;
     this.client = axios;
-    this.host = auth.get('pardotUrl');
+    this.pardotUrl = auth.get('pardotUrl').toString();
 
-    if (auth.get('pardotUrl').includes('pi.demo.pardot.com')) {
-      this.loginUrl = 'https://test.salesforce.com/services/oauth2/token';
+    if (this.pardotUrl.includes('demo')) {
+      this.loginUrl = `https://test.salesforce.com/services/oauth2/token?username=${auth.get('email').toString()}&password=${auth.get('password').toString()}&grant_type=password&client_secret=${auth.get('clientSecret')}&client_id=${auth.get('clientId')}`;
     } else {
-      this.loginUrl = 'https://login.salesforce.com/services/oauth2/token';
+      this.loginUrl = `https://login.salesforce.com/services/oauth2/token?username=${auth.get('email').toString()}&password=${auth.get('password').toString()}&grant_type=password&client_secret=${auth.get('clientSecret')}&client_id=${auth.get('clientId')}`;
     }
 
     this.businessUnitId = auth.get('businessUnitId');
 
     this.clientReady = new Promise((resolve, reject) => {
-      clientConstructor.post(this.loginUrl, {
-        username: auth.get('email').toString(),
-        password: auth.get('password').toString(),
-        grant_type: 'password',
-        client_secret: auth.get('clientSecret'),
-        client_id: auth.get('clientId'),
+      this.client.post(
+        this.loginUrl,
+        {},
+        { headers: {
+          'Content-type': 'application/x-www-form-urlencoded',
+        },
       }).then((res: any) => {
-        this.accessToken = res.access_token;
+        this.accessToken = `Bearer ${res.data.access_token}`;
         resolve(true);
-      }).fail((err: any) => {
+      }).catch((err: any) => {
         if (err.code === this.LOGIN_ERROR_CODE) {
           reject('Login failed. Please check your auth credentials and try again.');
         } else if (err.code === this.DAILY_API_LIMIT_EXCEEDED_ERROR_CODE) {
