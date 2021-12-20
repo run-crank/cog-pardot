@@ -91,6 +91,7 @@ export class CheckListMembership extends BaseStep implements StepInterface {
     try {
       listMembership = (await this.client.readByListIdAndProspectId(listId, prospect.id)).list_membership;
     } catch (e) {
+      console.log(e);
       //// This means that the List ID provided does not exist
       if (e.response.data.err === 'Invalid ID') {
         if (optInOut === 'not be a member of') {

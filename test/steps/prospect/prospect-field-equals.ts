@@ -204,5 +204,22 @@ describe('ProspectFieldEqualsStep', () => {
         expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.ERROR);
       });
     });
+
+    describe('No expectedValue provider on non be set operator', () => {
+      const expectedValues = {
+        email: 'test@pardot.com',
+        field: 'email',
+        operator: 'be',
+      };
+
+      beforeEach(() => {
+        protoStep.setData(Struct.fromJavaScript(expectedValues));
+      });
+
+      it('should respond with error', async () => {
+        const response = await stepUnderTest.executeStep(protoStep);
+        expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.ERROR);
+      });
+    });
   });
 });
