@@ -56,9 +56,9 @@ class ClientWrapper {
     this.pardotUrl = auth.get('pardotUrl').toString();
 
     if (this.pardotUrl.includes('demo')) {
-      this.loginUrl = `https://test.salesforce.com/services/oauth2/token`;
+      this.loginUrl = 'https://test.salesforce.com/services/oauth2/token';
     } else {
-      this.loginUrl = `https://login.salesforce.com/services/oauth2/token`;
+      this.loginUrl = 'https://login.salesforce.com/services/oauth2/token';
     }
 
     this.businessUnitId = auth.get('businessUnitId');
