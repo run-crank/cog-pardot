@@ -56,9 +56,9 @@ class ClientWrapper {
     this.pardotUrl = auth.get('pardotUrl').toString();
 
     if (this.pardotUrl.includes('demo')) {
-      this.loginUrl = `https://test.salesforce.com/services/oauth2/token?username=${auth.get('email').toString()}&password=${auth.get('password').toString()}&grant_type=password&client_secret=${auth.get('clientSecret')}&client_id=${auth.get('clientId')}`;
+      this.loginUrl = 'https://test.salesforce.com/services/oauth2/token';
     } else {
-      this.loginUrl = `https://login.salesforce.com/services/oauth2/token?username=${auth.get('email').toString()}&password=${auth.get('password').toString()}&grant_type=password&client_secret=${auth.get('clientSecret')}&client_id=${auth.get('clientId')}`;
+      this.loginUrl = 'https://login.salesforce.com/services/oauth2/token';
     }
 
     this.businessUnitId = auth.get('businessUnitId');
@@ -66,14 +66,18 @@ class ClientWrapper {
     this.clientReady = new Promise((resolve, reject) => {
       this.client.post(
         this.loginUrl,
-        {},
-        { headers: {
-          'Content-type': 'application/x-www-form-urlencoded',
-        },
-      }).then((res: any) => {
+        {
+          username: auth.get('email').toString(),
+          password: auth.get('password').toString(),
+          grant_type: 'password',
+          client_secret: auth.get('clientSecret'),
+          client_id: auth.get('clientId'),
+        })
+      .then((res: any) => {
         this.accessToken = `Bearer ${res.data.access_token}`;
         resolve(true);
-      }).catch((err: any) => {
+      })
+      .catch((err: any) => {
         if (err.code === this.LOGIN_ERROR_CODE) {
           reject('Login failed. Please check your auth credentials and try again.');
         } else if (err.code === this.DAILY_API_LIMIT_EXCEEDED_ERROR_CODE) {
