@@ -14,6 +14,11 @@ class ClientWrapper {
     description: 'Your Pardot Domain (If you are on a developer or sandbox account, enter "pi.demo.pardot.com", otherwise enter "pi.pardot.com")',
     help: 'If you use a sandbox or developer account, your url is "pi.demo.pardot.com", if you use a production instance, it is "pi.pardot.com"',
   }, {
+    field: 'loginUrl',
+    type: FieldDefinition.Type.STRING,
+    description: 'The Salesforce Domain used to initiate a Pardot connection (If you are on a sandbox account, enter "test.salesforce.com, otherwise enter "login.salesforce.com")',
+    help: 'If you use a sandbox account, your url is "test.salesforce.com", if you use a developer or production instance, it is "login.salesforce.com"',
+  }, {
     field: 'email',
     type: FieldDefinition.Type.EMAIL,
     description: 'Email address',
@@ -55,11 +60,17 @@ class ClientWrapper {
     this.retry = retry;
     this.client = axios;
     this.pardotUrl = auth.get('pardotUrl').toString();
+    this.loginUrl = auth.get('loginUrl').toString() || null;
 
-    if (this.pardotUrl.includes('demo')) {
-      this.loginUrl = 'https://test.salesforce.com/services/oauth2/token';
-    } else {
-      this.loginUrl = 'https://login.salesforce.com/services/oauth2/token';
+    if (!this.loginUrl) {
+      // in case their pardot account was set up before we added loginUrl to the auth fields
+      if (this.pardotUrl.includes('demo')) {
+        // Doesn't take into account developer accounts (they have 'demo' in the pardotUrl but use 'login.salesforce.com' for the loginUrl),
+        // but is the best we can do for old accounts
+        this.loginUrl = 'https://test.salesforce.com/services/oauth2/token';
+      } else {
+        this.loginUrl = 'https://login.salesforce.com/services/oauth2/token';
+      }
     }
 
     this.businessUnitId = auth.get('businessUnitId');
