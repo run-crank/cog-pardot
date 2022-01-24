@@ -1,7 +1,7 @@
 import { access } from 'fs';
 import * as grpc from 'grpc';
 const axios = require('axios');
-const FormData = require('form-data');
+const formData = require('form-data');
 import * as Retry from 'retry';
 import { Field } from '../core/base-step';
 import { FieldDefinition } from '../proto/cog_pb';
@@ -66,7 +66,7 @@ class ClientWrapper {
 
     this.clientReady = new Promise((resolve, reject) => {
 
-      const data = new FormData();
+      const data = new formData();
       data.append('username', auth.get('email').toString());
       data.append('password', auth.get('password').toString());
       data.append('grant_type', 'password');
@@ -74,12 +74,12 @@ class ClientWrapper {
       data.append('client_id', auth.get('clientId').toString());
 
       const config = {
+        data,
         method: 'post',
         url: this.loginUrl,
-        headers: { 
-          ...data.getHeaders()
+        headers: {
+          ...data.getHeaders(),
         },
-        data : data
       };
 
       this.client(config)
