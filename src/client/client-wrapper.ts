@@ -1,6 +1,7 @@
 import { access } from 'fs';
 import * as grpc from 'grpc';
-const axios = require('axios').default;
+const axios = require('axios');
+const formData = require('form-data');
 import * as Retry from 'retry';
 import { Field } from '../core/base-step';
 import { FieldDefinition } from '../proto/cog_pb';
@@ -64,15 +65,24 @@ class ClientWrapper {
     this.businessUnitId = auth.get('businessUnitId');
 
     this.clientReady = new Promise((resolve, reject) => {
-      this.client.post(
-        this.loginUrl,
-        {
-          username: auth.get('email').toString(),
-          password: auth.get('password').toString(),
-          grant_type: 'password',
-          client_secret: auth.get('clientSecret'),
-          client_id: auth.get('clientId'),
-        })
+
+      const data = new formData();
+      data.append('username', auth.get('email').toString());
+      data.append('password', auth.get('password').toString());
+      data.append('grant_type', 'password');
+      data.append('client_secret', auth.get('clientSecret').toString());
+      data.append('client_id', auth.get('clientId').toString());
+
+      const config = {
+        data,
+        method: 'post',
+        url: this.loginUrl,
+        headers: {
+          ...data.getHeaders(),
+        },
+      };
+
+      this.client(config)
       .then((res: any) => {
         this.accessToken = `Bearer ${res.data.access_token}`;
         resolve(true);
