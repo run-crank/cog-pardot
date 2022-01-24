@@ -63,7 +63,7 @@ class ClientWrapper {
     this.loginUrl = auth.get('loginUrl').toString() || null;
 
     if (!this.loginUrl) {
-      //in case their pardot account was set up before we added loginUrl to the auth fields
+      // in case their pardot account was set up before we added loginUrl to the auth fields
       if (this.pardotUrl.includes('demo')) {
         // Doesn't take into account developer accounts (they have 'demo' in the pardotUrl but use 'login.salesforce.com' for the loginUrl),
         // but is the best we can do for old accounts
