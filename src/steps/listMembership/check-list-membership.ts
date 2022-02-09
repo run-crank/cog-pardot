@@ -80,15 +80,11 @@ export class CheckListMembership extends BaseStep implements StepInterface {
     let prospectRecord;
     let listMembership;
 
-    const prospect = await this.client.readByEmail(email);
-
-    if (!prospect) {
-      return this.fail('No prospect found with email %s', [email]);
-    }
-
-    prospectRecord = this.keyValue('prospect', 'Checked Prospect', prospect);
-
     try {
+      const prospect = await this.client.readByEmail(email);
+
+      prospectRecord = this.keyValue('prospect', 'Checked Prospect', prospect);
+
       listMembership = (await this.client.readByListIdAndProspectId(listId, prospect.id)).list_membership;
     } catch (e) {
       //// This means that the List ID provided does not exist
@@ -102,6 +98,10 @@ export class CheckListMembership extends BaseStep implements StepInterface {
         }
 
         return this.fail('No list found with ID %d', [listId], [prospectRecord]);
+      }
+
+      else if (e.response.data.err === 'Invalid prospect email address') {
+        return this.fail('No prospect found with email %s', [email]);
       }
 
       return this.error('There was a problem checking list membership: %s', [e.toString()]);
