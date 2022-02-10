@@ -82,8 +82,8 @@ export class ProspectFieldEquals extends BaseStep implements StepInterface {
         return this.error('%s Please provide one of: %s', [e.message, baseOperators.join(', ')]);
       } else if (e instanceof util.InvalidOperandError) {
         return this.error('There was an error checking the prospect field: %s', [e.message]);
-      } else if (e.response.data.err === 'Invalid prospect email address') {
-        return this.fail('No prospect found with email %s', [email]);
+      } else if (e?.response?.data?.err === 'Invalid prospect email address') {
+        return this.error('No prospect found with email %s', [email]);
       }
       return this.error('There was an error checking the prospect field: %s', [e.message]);
     }
