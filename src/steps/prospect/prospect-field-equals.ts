@@ -66,10 +66,6 @@ export class ProspectFieldEquals extends BaseStep implements StepInterface {
     try {
       const prospect = await this.client.readByEmail(email);
 
-      if (!prospect) {
-        return this.fail('No prospect found with email %s', [email]);
-      }
-
       const prospectRecord = this.keyValue('prospect', 'Checked Prospect', prospect);
 
       if (!prospect.hasOwnProperty(field)) {
@@ -84,9 +80,10 @@ export class ProspectFieldEquals extends BaseStep implements StepInterface {
     } catch (e) {
       if (e instanceof util.UnknownOperatorError) {
         return this.error('%s Please provide one of: %s', [e.message, baseOperators.join(', ')]);
-      }
-      if (e instanceof util.InvalidOperandError) {
+      } else if (e instanceof util.InvalidOperandError) {
         return this.error('There was an error checking the prospect field: %s', [e.message]);
+      } else if (e?.response?.data?.err === 'Invalid prospect email address') {
+        return this.error('No prospect found with email %s', [email]);
       }
       return this.error('There was an error checking the prospect field: %s', [e.message]);
     }
