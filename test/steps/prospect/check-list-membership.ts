@@ -56,7 +56,7 @@ describe('CheckListMembership', () => {
 
     describe('Prospect does not exist', () => {
       beforeEach(() => {
-        clientWrapperStub.readByEmail.throws('Invalid prospect email address');
+        clientWrapperStub.readByEmail.throws({response:{data:{err:'Invalid prospect email address'}}});
         protoStep.setData(Struct.fromJavaScript({
           email: 'invalid@thisisjust.atomatest.com',
           optInOut: 'not be a member of',
@@ -64,9 +64,9 @@ describe('CheckListMembership', () => {
         }));
       });
 
-      it('should respond with error', async () => {
+      it('should respond with fail', async () => {
         const response = await stepUnderTest.executeStep(protoStep);
-        expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.ERROR);
+        expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.FAILED);
       });
     });
 
