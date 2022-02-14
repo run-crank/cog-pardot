@@ -99,7 +99,7 @@ export class CheckListMembership extends BaseStep implements StepInterface {
 
         return this.fail('No list found with ID %d', [listId], [prospectRecord]);
       } else if (e?.response?.data?.err === 'Invalid prospect email address') {
-        return this.error('No prospect found with email %s', [email]);
+        return this.fail('No prospect found with email %s', [email]);
       }
 
       return this.error('There was a problem checking list membership: %s', [e.toString()]);

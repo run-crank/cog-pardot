@@ -178,12 +178,12 @@ describe('ProspectFieldEqualsStep', () => {
       };
       beforeEach(() => {
         protoStep.setData(Struct.fromJavaScript(expectedValues));
-        clientWrapperStub.readByEmail.throws('Invalid prospect email address');
+        clientWrapperStub.readByEmail.throws({response:{data:{err:'Invalid prospect email address'}}});
       });
 
-      it('should respond with error', async () => {
+      it('should respond with fail', async () => {
         const response = await stepUnderTest.executeStep(protoStep);
-        expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.ERROR);
+        expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.FAILED);
       });
     });
 
