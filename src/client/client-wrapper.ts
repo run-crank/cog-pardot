@@ -45,8 +45,7 @@ class ClientWrapper {
     field: 'additionalBusinessUnits',
     type: FieldDefinition.Type.STRING,
     description: 'All available business units',
-  }
-];
+  }];
 
   public retry: any;
   public client: any;
