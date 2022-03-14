@@ -86,7 +86,6 @@ export class CheckListMembership extends BaseStep implements StepInterface {
     let prospectRecord;
     let listMembership;
 
-<<<<<<< HEAD
     // Get the actual Business Unit ID to use, based on the provided name
     let buid: string;
     if (!buidName || buidName == 'default') {
@@ -99,19 +98,11 @@ export class CheckListMembership extends BaseStep implements StepInterface {
     if (!prospect) {
       return this.fail('No prospect found with email %s', [email]);
     }
-=======
-    try {
-      const prospect = await this.client.readByEmail(email);
->>>>>>> 2fe079e43ec0b8e46b48887b026c2466a06086eb
 
       prospectRecord = this.keyValue('prospect', 'Checked Prospect', prospect);
 
-<<<<<<< HEAD
     try {
       listMembership = (await this.client.readByListIdAndProspectId(listId, prospect.id, buid)).list_membership;
-=======
-      listMembership = (await this.client.readByListIdAndProspectId(listId, prospect.id)).list_membership;
->>>>>>> 2fe079e43ec0b8e46b48887b026c2466a06086eb
     } catch (e) {
       //// This means that the List ID provided does not exist
       if (e?.response?.data?.err === 'Invalid ID') {
