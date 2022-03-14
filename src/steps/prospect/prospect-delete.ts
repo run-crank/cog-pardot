@@ -10,14 +10,27 @@ export class DeleteProspect extends BaseStep implements StepInterface {
     field: 'email',
     type: FieldDefinition.Type.EMAIL,
     description: 'Email address',
+  }, {
+    field: 'businessUnitName',
+    type: FieldDefinition.Type.STRING,
+    description: 'Name of Business Unit to use',
+    optionality: FieldDefinition.Optionality.OPTIONAL,
   }];
 
   async executeStep(step: Step): Promise<RunStepResponse> {
     const stepData: any = step.getData().toJavaScript();
     const email: any = stepData.email;
+    const buidName: string = stepData.businessUnitName;
 
     try {
-      await this.client.deleteProspectByEmail(email);
+      // Get the actual Business Unit ID to use, based on the provided name
+      let buid: string;
+      if (!buidName || buidName == 'default') {
+        buid = this.client.businessUnitId;
+      } else {
+        buid = this.client.additionalBusinessUnits[buidName];
+      }
+      await this.client.deleteProspectByEmail(email, buid);
       return this.pass('Successfully deleted Prospect: %s', [email]);
     } catch (e) {
       return this.error('There was a problem deleting the Prospect: %s', [e.toString()]);

@@ -5,11 +5,10 @@ export class ProspectAwareMixin {
   public accessToken: any;
   public pardotUrl: any;
   public host: any;
-  public businessUnitId: any;
 
   public attempt: (fn: () => Promise<any>, retryCount?: number) => Promise<any>;
 
-  public async createProspect(prospect: Record<string, any>) {
+  public async createProspect(prospect: Record<string, any>, businessUnitId: string) {
     await this.clientReady;
     return this.attempt(() => {
       return new Promise((resolve, reject) => {
@@ -19,7 +18,7 @@ export class ProspectAwareMixin {
           {
             headers: {
               'Authorization': this.accessToken,
-              'Pardot-Business-Unit-Id': this.businessUnitId,
+              'Pardot-Business-Unit-Id': businessUnitId,
             },
             params: {
               ...prospect,
@@ -32,15 +31,15 @@ export class ProspectAwareMixin {
     });
   }
 
-  public async deleteProspectByEmail(email: string) {
+  public async deleteProspectByEmail(email: string, businessUnitId: string) {
     await this.clientReady;
-    const prospect: any = await this.readByEmail(email);
+    const prospect: any = await this.readByEmail(email, businessUnitId);
     return this.attempt(() => {
       return new Promise((resolve, reject) => {
         this.client.delete(`https://${this.pardotUrl}/api/prospect/version/4/do/delete/id/${prospect.id}?format=json`, {
           headers: {
             'Authorization': this.accessToken,
-            'Pardot-Business-Unit-Id': this.businessUnitId,
+            'Pardot-Business-Unit-Id': businessUnitId,
           },
         }).then((res) => {
           resolve(res.data);
@@ -49,7 +48,7 @@ export class ProspectAwareMixin {
     });
   }
 
-  public async readByEmail(email: string) {
+  public async readByEmail(email: string, businessUnitId: string) {
     await this.clientReady;
     return this.attempt(() => {
       return new Promise((resolve, reject) => {
@@ -57,7 +56,7 @@ export class ProspectAwareMixin {
         this.client.get(`https://${this.pardotUrl}/api/prospect/version/4/do/read/email/${email}?format=json`, {
           headers: {
             'Authorization': this.accessToken,
-            'Pardot-Business-Unit-Id': this.businessUnitId,
+            'Pardot-Business-Unit-Id': businessUnitId,
           },
         }).then((response) => {
           const prospects = response.data.prospect;

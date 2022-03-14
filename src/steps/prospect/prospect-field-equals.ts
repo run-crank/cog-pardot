@@ -28,6 +28,11 @@ export class ProspectFieldEquals extends BaseStep implements StepInterface {
     type: FieldDefinition.Type.ANYSCALAR,
     description: 'Expected field value',
     optionality: FieldDefinition.Optionality.OPTIONAL,
+  }, {
+    field: 'businessUnitName',
+    type: FieldDefinition.Type.STRING,
+    description: 'Name of Business Unit to use',
+    optionality: FieldDefinition.Optionality.OPTIONAL,
   }];
   protected expectedRecords: ExpectedRecord[] = [{
     id: 'prospect',
@@ -58,13 +63,22 @@ export class ProspectFieldEquals extends BaseStep implements StepInterface {
     const field: any = stepData.field;
     const expectedValue: any = stepData.expectedValue;
     const operator = stepData.operator || 'be';
+    const buidName: string = stepData.businessUnitName;
 
     if (isNullOrUndefined(expectedValue) && !(operator == 'be set' || operator == 'not be set')) {
       return this.error("The operator '%s' requires an expected value. Please provide one.", [operator]);
     }
 
     try {
-      const prospect = await this.client.readByEmail(email);
+      // Get the actual Business Unit ID to use, based on the provided name
+      let buid: string;
+      if (!buidName || buidName == 'default') {
+        buid = this.client.businessUnitId;
+      } else {
+        buid = this.client.additionalBusinessUnits[buidName];
+      }
+
+      const prospect = await this.client.readByEmail(email, buid);
 
       const prospectRecord = this.keyValue('prospect', 'Checked Prospect', prospect);
 

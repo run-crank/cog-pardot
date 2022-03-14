@@ -18,6 +18,11 @@ export class CheckListMembership extends BaseStep implements StepInterface {
     field: 'listId',
     type: FieldDefinition.Type.NUMERIC,
     description: 'The ID of the Pardot List',
+  }, {
+    field: 'businessUnitName',
+    type: FieldDefinition.Type.STRING,
+    description: 'Name of Business Unit to use',
+    optionality: FieldDefinition.Optionality.OPTIONAL,
   }];
   protected expectedRecords: ExpectedRecord[] = [{
     id: 'listMembership',
@@ -76,16 +81,22 @@ export class CheckListMembership extends BaseStep implements StepInterface {
     const email = stepData.email;
     const optInOut = stepData.optInOut;
     const listId = stepData.listId;
+    const buidName: string = stepData.businessUnitName;
     let listMembershipRecord;
     let prospectRecord;
     let listMembership;
 
     try {
-      const prospect = await this.client.readByEmail(email);
-
+      // Get the actual Business Unit ID to use, based on the provided name
+      let buid: string;
+      if (!buidName || buidName == 'default') {
+        buid = this.client.businessUnitId;
+      } else {
+        buid = this.client.additionalBusinessUnits[buidName];
+      }
+      const prospect = await this.client.readByEmail(email, buid);
       prospectRecord = this.keyValue('prospect', 'Checked Prospect', prospect);
-
-      listMembership = (await this.client.readByListIdAndProspectId(listId, prospect.id)).list_membership;
+      listMembership = (await this.client.readByListIdAndProspectId(listId, prospect.id, buid)).list_membership;
     } catch (e) {
       //// This means that the List ID provided does not exist
       if (e?.response?.data?.err === 'Invalid ID') {
