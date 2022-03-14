@@ -43,7 +43,7 @@ class ClientWrapper {
     description: 'Default Business Unit ID',
   }, {
     field: 'additionalBusinessUnits',
-    type: FieldDefinition.Type.STRING,
+    type: FieldDefinition.Type.MAP,
     description: 'All available business units',
   }];
 
@@ -79,7 +79,7 @@ class ClientWrapper {
     }
 
     this.businessUnitId = auth.get('businessUnitId'); // Only used if the buidName passed to a given step is 'default'
-    this.additionalBusinessUnits = JSON.parse(auth.get('additionalBusinessUnits').toString()); // Used if the buidName is anything other than 'default'
+    this.additionalBusinessUnits = auth.get('additionalBusinessUnits'); // Used if the buidName is anything other than 'default'
 
     this.clientReady = new Promise((resolve, reject) => {
 
