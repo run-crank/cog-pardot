@@ -17,7 +17,7 @@ class ClientWrapper {
     field: 'loginUrl',
     type: FieldDefinition.Type.STRING,
     description: 'The Salesforce Domain used to initiate a Pardot connection (If you are on a sandbox account, enter "test.salesforce.com, otherwise enter "login.salesforce.com")',
-    help: 'If you use a sandbox account, your url is "test.salesforce.com", if you use a developer or production instance, it is "login.salesforce.com"',
+    help: 'If you use a sandbox account, your url is "https://test.salesforce.com", if you use a developer or production instance, it is "https://login.salesforce.com"',
   }, {
     field: 'email',
     type: FieldDefinition.Type.EMAIL,
@@ -40,8 +40,13 @@ class ClientWrapper {
   }, {
     field: 'businessUnitId',
     type: FieldDefinition.Type.STRING,
-    description: 'Business Unit ID',
-  }];
+    description: 'Default Business Unit ID',
+  }, {
+    field: 'additionalBusinessUnits',
+    type: FieldDefinition.Type.STRING,
+    description: 'All available business units',
+  }
+];
 
   public retry: any;
   public client: any;
@@ -50,6 +55,7 @@ class ClientWrapper {
   public pardotUrl: any;
   public accessToken: any;
   public businessUnitId: any;
+  public additionalBusinessUnits: any;
 
   public LOGIN_ERROR_CODE: number = 15;
   public DAILY_API_LIMIT_EXCEEDED_ERROR_CODE: number = 122;
@@ -73,7 +79,8 @@ class ClientWrapper {
       }
     }
 
-    this.businessUnitId = auth.get('businessUnitId');
+    this.businessUnitId = auth.get('businessUnitId'); // Only used if the buidName passed to a given step is 'default'
+    this.additionalBusinessUnits = JSON.parse(auth.get('additionalBusinessUnits').toString()); // Used if the buidName is anything other than 'default'
 
     this.clientReady = new Promise((resolve, reject) => {
 

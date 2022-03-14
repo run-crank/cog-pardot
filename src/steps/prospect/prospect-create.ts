@@ -10,6 +10,11 @@ export class CreateProspect extends BaseStep implements StepInterface {
     field: 'prospect',
     type: FieldDefinition.Type.MAP,
     description: 'A map of field names to field values',
+  }, {
+    field: 'businessUnitName',
+    type: FieldDefinition.Type.STRING,
+    description: 'Name of Business Unit to use',
+    optionality: FieldDefinition.Optionality.OPTIONAL,
   }];
   protected expectedRecords: ExpectedRecord[] = [{
     id: 'prospect',
@@ -37,13 +42,21 @@ export class CreateProspect extends BaseStep implements StepInterface {
   async executeStep(step: Step): Promise<RunStepResponse> {
     const stepData: any = step.getData().toJavaScript();
     const prospect: any = stepData.prospect;
+    const buidName: string = stepData.businessUnitName;
 
     try {
       if (!prospect.hasOwnProperty('email')) {
         return this.fail('An email address must be provided in order to create a Pardot prospect');
       }
 
-      const result = await this.client.createProspect(prospect);
+      // Get the actual Business Unit ID to use, based on the provided name
+      let buid: string;
+      if (!buidName || buidName == 'default') {
+        buid = this.client.businessUnitId;
+      } else {
+        buid = this.client.additionalBusinessUnits[buidName];
+      }
+      const result = await this.client.createProspect(prospect, buid);
       const prospectRecord = this.keyValue('prospect', 'Created Prospect', result.prospect);
       return this.pass('Successfully created Prospect with ID %s', [result.prospect.id], [prospectRecord]);
     } catch (e) {
