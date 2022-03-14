@@ -45,6 +45,7 @@ class ClientWrapper {
     field: 'additionalBusinessUnits',
     type: FieldDefinition.Type.MAP,
     description: 'All available business units',
+    optionality: FieldDefinition.Optionality.OPTIONAL,
   }];
 
   public retry: any;
