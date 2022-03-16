@@ -41,11 +41,6 @@ class ClientWrapper {
     field: 'businessUnitId',
     type: FieldDefinition.Type.STRING,
     description: 'Default Business Unit ID',
-  }, {
-    field: 'additionalBusinessUnits',
-    type: FieldDefinition.Type.MAP,
-    description: 'All available business units',
-    optionality: FieldDefinition.Optionality.OPTIONAL,
   }];
 
   public retry: any;
@@ -79,8 +74,11 @@ class ClientWrapper {
       }
     }
 
+    if (auth.get('additionalBusinessUnits')) {
+      this.additionalBusinessUnits = auth.get('additionalBusinessUnits'); // Used if the buidName provided to a step is anything other than 'default'
+    }
+
     this.businessUnitId = auth.get('businessUnitId'); // Only used if the buidName passed to a given step is 'default'
-    this.additionalBusinessUnits = auth.get('additionalBusinessUnits'); // Used if the buidName is anything other than 'default'
 
     this.clientReady = new Promise((resolve, reject) => {
 
