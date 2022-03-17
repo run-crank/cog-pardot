@@ -25,7 +25,7 @@ export class DeleteProspect extends BaseStep implements StepInterface {
     try {
       // Get the actual Business Unit ID to use, based on the provided name
       let buid: string;
-      if (!buidName || buidName == 'default') {
+      if (!buidName || buidName == 'Default') {
         buid = this.client.businessUnitId;
       } else {
         buid = this.client.additionalBusinessUnits[buidName];
