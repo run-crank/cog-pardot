@@ -16,8 +16,8 @@ class ClientWrapper {
   }, {
     field: 'loginUrl',
     type: FieldDefinition.Type.STRING,
-    description: 'The Salesforce Domain used to initiate a Pardot connection (If you are on a sandbox account, enter "test.salesforce.com, otherwise enter "login.salesforce.com")',
-    help: 'If you use a sandbox account, your url is "https://test.salesforce.com", if you use a developer or production instance, it is "https://login.salesforce.com"',
+    description: 'The Salesforce Domain used to initiate a Pardot connection (If you are on a sandbox account, enter "https://test.salesforce.com/services/oauth2/token", otherwise enter "https://login.salesforce.com/services/oauth2/token")',
+    help: 'If you use a sandbox account, your url is "https://test.salesforce.com/services/oauth2/token", if you use a developer or production instance, it is "https://login.salesforce.com/services/oauth2/token"',
   }, {
     field: 'email',
     type: FieldDefinition.Type.EMAIL,
@@ -75,10 +75,10 @@ class ClientWrapper {
     }
 
     if (auth.get('additionalBusinessUnits')) {
-      this.additionalBusinessUnits = auth.get('additionalBusinessUnits'); // Used if the buidName provided to a step is anything other than 'default'
+      this.additionalBusinessUnits = JSON.parse(auth.get('additionalBusinessUnits').toString()); // Used if the buidName provided to a step is anything other than 'default'
     }
 
-    this.businessUnitId = auth.get('businessUnitId'); // Only used if the buidName passed to a given step is 'default'
+    this.businessUnitId = auth.get('businessUnitId').toString(); // Only used if the buidName passed to a given step is 'default'
 
     this.clientReady = new Promise((resolve, reject) => {
 
