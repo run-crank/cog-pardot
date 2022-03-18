@@ -37,21 +37,25 @@ describe('ProspectFieldEqualsStep', () => {
         return field.toObject();
       });
 
-      expect(fields[0].key).to.equal('email');
-      expect(fields[0].optionality).to.equal(FieldDefinition.Optionality.REQUIRED);
-      expect(fields[0].type).to.equal(FieldDefinition.Type.EMAIL);
+      expect(fields[0].key).to.equal('businessUnitName');
+      expect(fields[0].optionality).to.equal(FieldDefinition.Optionality.OPTIONAL);
+      expect(fields[0].type).to.equal(FieldDefinition.Type.STRING);
 
-      expect(fields[1].key).to.equal('field');
+      expect(fields[1].key).to.equal('email');
       expect(fields[1].optionality).to.equal(FieldDefinition.Optionality.REQUIRED);
-      expect(fields[1].type).to.equal(FieldDefinition.Type.STRING);
+      expect(fields[1].type).to.equal(FieldDefinition.Type.EMAIL);
 
-      expect(fields[2].key).to.equal('operator');
-      expect(fields[2].optionality).to.equal(FieldDefinition.Optionality.OPTIONAL);
+      expect(fields[2].key).to.equal('field');
+      expect(fields[2].optionality).to.equal(FieldDefinition.Optionality.REQUIRED);
       expect(fields[2].type).to.equal(FieldDefinition.Type.STRING);
 
-      expect(fields[3].key).to.equal('expectedValue');
+      expect(fields[3].key).to.equal('operator');
       expect(fields[3].optionality).to.equal(FieldDefinition.Optionality.OPTIONAL);
-      expect(fields[3].type).to.equal(FieldDefinition.Type.ANYSCALAR);
+      expect(fields[3].type).to.equal(FieldDefinition.Type.STRING);
+
+      expect(fields[4].key).to.equal('expectedValue');
+      expect(fields[4].optionality).to.equal(FieldDefinition.Optionality.OPTIONAL);
+      expect(fields[4].type).to.equal(FieldDefinition.Type.ANYSCALAR);
     });
 
     it('should return expected step records', () => {

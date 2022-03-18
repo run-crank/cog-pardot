@@ -37,9 +37,13 @@ describe('DeleteProspectStep', () => {
         return field.toObject();
       });
 
-      expect(fields[0].key).to.equal('email');
-      expect(fields[0].optionality).to.equal(FieldDefinition.Optionality.REQUIRED);
-      expect(fields[0].type).to.equal(FieldDefinition.Type.EMAIL);
+      expect(fields[0].key).to.equal('businessUnitName');
+      expect(fields[0].optionality).to.equal(FieldDefinition.Optionality.OPTIONAL);
+      expect(fields[0].type).to.equal(FieldDefinition.Type.STRING);
+
+      expect(fields[1].key).to.equal('email');
+      expect(fields[1].optionality).to.equal(FieldDefinition.Optionality.REQUIRED);
+      expect(fields[1].type).to.equal(FieldDefinition.Type.EMAIL);
     });
   });
 
