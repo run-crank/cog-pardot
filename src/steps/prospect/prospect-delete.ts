@@ -7,14 +7,14 @@ export class DeleteProspect extends BaseStep implements StepInterface {
   protected stepExpression: string = 'delete the (?<email>.+) pardot prospect';
   protected stepType: StepDefinition.Type = StepDefinition.Type.ACTION;
   protected expectedFields: Field[] = [{
+    field: 'businessUnitName',
+    type: FieldDefinition.Type.STRING,
+    description: 'Name of Business Unit',
+    optionality: FieldDefinition.Optionality.OPTIONAL,
+  }, {
     field: 'email',
     type: FieldDefinition.Type.EMAIL,
     description: 'Email address',
-  }, {
-    field: 'businessUnitName',
-    type: FieldDefinition.Type.STRING,
-    description: 'Name of Business Unit to use',
-    optionality: FieldDefinition.Optionality.OPTIONAL,
   }];
 
   async executeStep(step: Step): Promise<RunStepResponse> {

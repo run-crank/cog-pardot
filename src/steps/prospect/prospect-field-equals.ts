@@ -11,6 +11,11 @@ export class ProspectFieldEquals extends BaseStep implements StepInterface {
   protected stepExpression: string = 'the (?<field>[a-zA-Z0-9_]+) field on pardot prospect (?<email>.+) should (?<operator>be set|not be set|be less than|be greater than|be one of|be|contain|not be one of|not be|not contain) ?(?<expectedValue>.+)?';
   protected stepType: StepDefinition.Type = StepDefinition.Type.VALIDATION;
   protected expectedFields: Field[] = [{
+    field: 'businessUnitName',
+    type: FieldDefinition.Type.STRING,
+    description: 'Name of Business Unit',
+    optionality: FieldDefinition.Optionality.OPTIONAL,
+  }, {
     field: 'email',
     type: FieldDefinition.Type.EMAIL,
     description: 'Prospect\'s email address',
@@ -27,11 +32,6 @@ export class ProspectFieldEquals extends BaseStep implements StepInterface {
     field: 'expectedValue',
     type: FieldDefinition.Type.ANYSCALAR,
     description: 'Expected field value',
-    optionality: FieldDefinition.Optionality.OPTIONAL,
-  }, {
-    field: 'businessUnitName',
-    type: FieldDefinition.Type.STRING,
-    description: 'Name of Business Unit to use',
     optionality: FieldDefinition.Optionality.OPTIONAL,
   }];
   protected expectedRecords: ExpectedRecord[] = [{

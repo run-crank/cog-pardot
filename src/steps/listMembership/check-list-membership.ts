@@ -7,6 +7,11 @@ export class CheckListMembership extends BaseStep implements StepInterface {
   protected stepExpression: string = 'the (?<email>.+) pardot prospect should (?<optInOut>be opted in to|be opted out of|not be a member of) list (?<listId>.+)';
   protected stepType: StepDefinition.Type = StepDefinition.Type.VALIDATION;
   protected expectedFields: Field[] = [{
+    field: 'businessUnitName',
+    type: FieldDefinition.Type.STRING,
+    description: 'Name of Business Unit',
+    optionality: FieldDefinition.Optionality.OPTIONAL,
+  }, {
     field: 'email',
     type: FieldDefinition.Type.EMAIL,
     description: 'The Email Address of the Prospect',
@@ -18,11 +23,6 @@ export class CheckListMembership extends BaseStep implements StepInterface {
     field: 'listId',
     type: FieldDefinition.Type.NUMERIC,
     description: 'The ID of the Pardot List',
-  }, {
-    field: 'businessUnitName',
-    type: FieldDefinition.Type.STRING,
-    description: 'Name of Business Unit to use',
-    optionality: FieldDefinition.Optionality.OPTIONAL,
   }];
   protected expectedRecords: ExpectedRecord[] = [{
     id: 'listMembership',
