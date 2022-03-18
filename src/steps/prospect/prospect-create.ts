@@ -7,14 +7,14 @@ export class CreateProspect extends BaseStep implements StepInterface {
   protected stepExpression: string = 'create a pardot prospect';
   protected stepType: StepDefinition.Type = StepDefinition.Type.ACTION;
   protected expectedFields: Field[] = [{
+    field: 'businessUnitName',
+    type: FieldDefinition.Type.STRING,
+    description: 'Name of Business Unit',
+    optionality: FieldDefinition.Optionality.OPTIONAL,
+  }, {
     field: 'prospect',
     type: FieldDefinition.Type.MAP,
     description: 'A map of field names to field values',
-  }, {
-    field: 'businessUnitName',
-    type: FieldDefinition.Type.STRING,
-    description: 'Name of Business Unit to use',
-    optionality: FieldDefinition.Optionality.OPTIONAL,
   }];
   protected expectedRecords: ExpectedRecord[] = [{
     id: 'prospect',
