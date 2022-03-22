@@ -34,7 +34,7 @@ export class DeleteProspect extends BaseStep implements StepInterface {
       return this.pass('Successfully deleted Prospect: %s', [email]);
     } catch (e) {
       if (e.toString().includes('Invalid value "undefined" for header "Pardot-Business-Unit-Id"')) {
-        return this.error('There was a problem deleting the Prospect: No Prospect found with email %s in Business Unit %s', [email, buidName]);
+        return this.fail('No Prospect found with email %s in Business Unit %s', [email, buidName]);
       }
       if (e?.response?.data?.err === 'Invalid prospect email address') {
         return this.fail('No prospect found with email %s', [email]);
