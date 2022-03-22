@@ -75,7 +75,7 @@ class ClientWrapper {
     }
 
     if (auth.get('additionalBusinessUnits')) {
-      this.additionalBusinessUnits = JSON.parse(auth.get('additionalBusinessUnits').toString()); // Used if the buidName provided to a step is anything other than 'default'
+      this.additionalBusinessUnits = JSON.parse(JSON.stringify(auth.get('additionalBusinessUnits'))); // Used if the buidName provided to a step is anything other than 'default'
     }
 
     this.businessUnitId = auth.get('businessUnitId').toString(); // Only used if the buidName passed to a given step is 'default'
