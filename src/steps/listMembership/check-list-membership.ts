@@ -111,6 +111,8 @@ export class CheckListMembership extends BaseStep implements StepInterface {
         return this.fail('No list found with ID %d', [listId], [prospectRecord]);
       } else if (e?.response?.data?.err === 'Invalid prospect email address') {
         return this.fail('No prospect found with email %s', [email]);
+      } else if (e.toString().includes('Invalid value "undefined" for header "Pardot-Business-Unit-Id"')) {
+        return this.error('There was a problem checking list membership: No Prospect found with email %s in Business Unit %s', [email, buidName]);
       }
 
       return this.error('There was a problem checking list membership: %s', [e.toString()]);
