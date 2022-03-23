@@ -75,7 +75,9 @@ class ClientWrapper {
     }
 
     if (auth.get('additionalBusinessUnits')) {
-      this.additionalBusinessUnits = JSON.parse(JSON.stringify(auth.get('additionalBusinessUnits'))); // Used if the buidName provided to a step is anything other than 'default'
+      // Used if the buidName provided to a step is anything other than 'default'
+      // Needs to be stringified again since it is a Metadata type, and then parsed twice to get the actual object
+      this.additionalBusinessUnits = JSON.parse(JSON.parse(JSON.stringify(auth.get('additionalBusinessUnits'))));
     }
 
     this.businessUnitId = auth.get('businessUnitId').toString(); // Only used if the buidName passed to a given step is 'default'
