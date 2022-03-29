@@ -62,6 +62,13 @@ class ClientWrapper {
     this.client = axios;
     this.pardotUrl = auth.get('pardotUrl').toString();
     this.loginUrl = auth.get('loginUrl').toString() || null;
+    this.businessUnitId = auth.get('businessUnitId').toString(); // Only used if the buidName passed to a given step is 'default'
+
+    if (auth.get('additionalBusinessUnits').length) {
+      // Used if the buidName provided to a step is anything other than 'default'
+      // Needs to be stringified again since it is a Metadata type, and then parsed twice to get the actual object
+      this.additionalBusinessUnits = JSON.parse(JSON.parse(JSON.stringify(auth.get('additionalBusinessUnits'))));
+    }
 
     if (!this.loginUrl) {
       // in case their pardot account was set up before we added loginUrl to the auth fields
@@ -74,45 +81,53 @@ class ClientWrapper {
       }
     }
 
-    if (auth.get('additionalBusinessUnits').length) {
-      // Used if the buidName provided to a step is anything other than 'default'
-      // Needs to be stringified again since it is a Metadata type, and then parsed twice to get the actual object
-      this.additionalBusinessUnits = JSON.parse(JSON.parse(JSON.stringify(auth.get('additionalBusinessUnits'))));
-    }
+    this.clientReady = new Promise(async (resolve, reject) => {
+      try {
+        let tokenResponse;
 
-    this.businessUnitId = auth.get('businessUnitId').toString(); // Only used if the buidName passed to a given step is 'default'
+        if (auth.get('refreshToken').toString()) {
+          const url = `${this.loginUrl}?grant_type=refresh_token
+                      &client_id=${auth.get('clientId').toString()}
+                      &client_secret=${auth.get('clientSecret').toString()}
+                      &refresh_token=${auth.get('refreshToken').toString()}`;
 
-    this.clientReady = new Promise((resolve, reject) => {
+          tokenResponse = await axios.post(url);
+        }
 
-      const data = new formData();
-      data.append('username', auth.get('email').toString());
-      data.append('password', auth.get('password').toString());
-      data.append('grant_type', 'password');
-      data.append('client_secret', auth.get('clientSecret').toString());
-      data.append('client_id', auth.get('clientId').toString());
+        if (auth.get('username').toString() && auth.get('password').toString()) {
+          const data = new formData();
+          data.append('username', auth.get('email').toString());
+          data.append('password', auth.get('password').toString());
+          data.append('grant_type', 'password');
+          data.append('client_secret', auth.get('clientSecret').toString());
+          data.append('client_id', auth.get('clientId').toString());
 
-      const config = {
-        data,
-        method: 'post',
-        url: this.loginUrl,
-        headers: {
-          ...data.getHeaders(),
-        },
-      };
+          const config = {
+            data,
+            method: 'post',
+            url: this.loginUrl,
+            headers: {
+              ...data.getHeaders(),
+            },
+          };
 
-      this.client(config)
-      .then((res: any) => {
-        this.accessToken = `Bearer ${res.data.access_token}`;
-        resolve(true);
-      })
-      .catch((err: any) => {
+          tokenResponse = await this.client(config);
+        }
+
+        if (tokenResponse.status === 200 && tokenResponse.data.access_token) {
+          this.accessToken = `Bearer ${tokenResponse.data.access_token}`;
+          resolve(true);
+        }
+
+      } catch (err) {
         if (err.code === this.LOGIN_ERROR_CODE) {
           reject('Login failed. Please check your auth credentials and try again.');
         } else if (err.code === this.DAILY_API_LIMIT_EXCEEDED_ERROR_CODE) {
           reject('API call limit reached for today.');
         }
         reject(err);
-      });
+      }
+
     });
   }
 
