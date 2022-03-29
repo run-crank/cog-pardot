@@ -64,7 +64,6 @@ class ClientWrapper {
     this.loginUrl = auth.get('loginUrl').toString() || null;
     this.businessUnitId = auth.get('businessUnitId').toString(); // Only used if the buidName passed to a given step is 'default'
 
-
     if (auth.get('additionalBusinessUnits').length) {
       // Used if the buidName provided to a step is anything other than 'default'
       // Needs to be stringified again since it is a Metadata type, and then parsed twice to get the actual object
@@ -84,16 +83,15 @@ class ClientWrapper {
 
     this.clientReady = new Promise(async (resolve, reject) => {
       try {
-        let tokenResponse
+        let tokenResponse;
 
         if (auth.get('refreshToken').toString()) {
-          let url = this.loginUrl + 
-          '?grant_type=refresh_token' +
-          '&client_id=' + '3MVG9IHf89I1t8hpQPggDAnyZs81Z.9CvcIw1IsSFohwBoXVCyd.tOM0za_00dHN6KnEp1mMg3SD99ywkp90Z' + //auth.get('clientId').toString() +
-          '&client_secret=' + '8A8F37E254E77E40651707C23844703641CEB4CCABE148841013616931E3B93D' + //auth.get('clientSecret').toString() + 
-          '&refresh_token=' + auth.get('refreshToken').toString()
-          
-          tokenResponse = await axios.post(url)
+          const url = `${this.loginUrl}?grant_type=refresh_token
+                      &client_id=${auth.get('clientId').toString()}
+                      &client_secret=${auth.get('clientSecret').toString()}
+                      &refresh_token=${auth.get('refreshToken').toString()}`;
+
+          tokenResponse = await axios.post(url);
         }
 
         if (auth.get('username').toString() && auth.get('password').toString()) {
@@ -113,7 +111,7 @@ class ClientWrapper {
             },
           };
 
-          tokenResponse = await this.client(config)
+          tokenResponse = await this.client(config);
         }
 
         if (tokenResponse.status === 200 && tokenResponse.data.access_token) {
@@ -121,7 +119,7 @@ class ClientWrapper {
           resolve(true);
         }
 
-      } catch(err) {
+      } catch (err) {
         if (err.code === this.LOGIN_ERROR_CODE) {
           reject('Login failed. Please check your auth credentials and try again.');
         } else if (err.code === this.DAILY_API_LIMIT_EXCEEDED_ERROR_CODE) {
@@ -129,7 +127,7 @@ class ClientWrapper {
         }
         reject(err);
       }
-      
+
     });
   }
 
