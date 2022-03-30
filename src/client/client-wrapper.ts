@@ -94,7 +94,7 @@ class ClientWrapper {
           tokenResponse = await axios.post(url);
         }
 
-        if (auth.get('username').toString() && auth.get('password').toString()) {
+        if (auth.get('email').toString() && auth.get('password').toString()) {
           const data = new formData();
           data.append('username', auth.get('email').toString());
           data.append('password', auth.get('password').toString());
