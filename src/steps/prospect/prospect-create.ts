@@ -1,5 +1,5 @@
 import { BaseStep, ExpectedRecord, Field, StepInterface } from '../../core/base-step';
-import { Step, RunStepResponse, FieldDefinition, StepDefinition, RecordDefinition } from '../../proto/cog_pb';
+import { Step, RunStepResponse, FieldDefinition, StepDefinition, RecordDefinition, StepRecord } from '../../proto/cog_pb';
 
 export class CreateProspect extends BaseStep implements StepInterface {
 
@@ -57,11 +57,20 @@ export class CreateProspect extends BaseStep implements StepInterface {
         buid = this.client.additionalBusinessUnits[buidName];
       }
       const result = await this.client.createProspect(prospect, buid);
-      const prospectRecord = this.keyValue('prospect', 'Created Prospect', result.prospect);
-      return this.pass('Successfully created Prospect with ID %s', [result.prospect.id], [prospectRecord]);
+      const record = this.createRecord(result.prospect);
+      const orderedRecord = this.createOrderedRecord(result.prospect, stepData['__stepOrder']);
+      return this.pass('Successfully created Prospect with ID %s', [result.prospect.id], [record, orderedRecord]);
     } catch (e) {
       return this.error('There was a problem creating the Prospect: %s', [e.toString()]);
     }
+  }
+
+  public createRecord(prospect): StepRecord {
+    return this.keyValue('prospect', 'Created Prospect', prospect);
+  }
+
+  public createOrderedRecord(prospect, stepOrder = 1): StepRecord {
+    return this.keyValue(`prospect.${stepOrder}`, `Created Prospect from Step ${stepOrder}`, prospect);
   }
 
 }

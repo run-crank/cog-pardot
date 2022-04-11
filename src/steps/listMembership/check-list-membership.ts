@@ -99,7 +99,7 @@ export class CheckListMembership extends BaseStep implements StepInterface {
       listMembership = (await this.client.readByListIdAndProspectId(listId, prospect.id, buid)).list_membership;
     } catch (e) {
       //// This means that the List ID provided does not exist
-      if (e?.response?.data?.err === 'Invalid ID') {
+      if (e.response.data.err === 'Invalid ID') {
         if (optInOut === 'not be a member of') {
           return this.pass(
             'Prospect %s is not a member of %d, as expected.',
@@ -109,7 +109,7 @@ export class CheckListMembership extends BaseStep implements StepInterface {
         }
 
         return this.fail('No list found with ID %d', [listId], [prospectRecord]);
-      } else if (e?.response?.data?.err === 'Invalid prospect email address') {
+      } else if (e.response.data.err === 'Invalid prospect email address') {
         return this.fail('No prospect found with email %s', [email]);
       } else if (e.toString().includes('Invalid value "undefined" for header "Pardot-Business-Unit-Id"')) {
         return this.fail('No Prospect found with email %s in Business Unit %s', [email, buidName]);
