@@ -70,7 +70,7 @@ export class CreateProspect extends BaseStep implements StepInterface {
   }
 
   public createOrderedRecord(prospect, stepOrder = 1): StepRecord {
-    return this.keyValue(`prospect.${stepOrder}`, `Created Prospect from Step ${stepOrder}`, prospect);;
+    return this.keyValue(`prospect.${stepOrder}`, `Created Prospect from Step ${stepOrder}`, prospect);
   }
 
 }
