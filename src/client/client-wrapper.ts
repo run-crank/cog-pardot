@@ -5,7 +5,7 @@ const formData = require('form-data');
 import * as Retry from 'retry';
 import { Field } from '../core/base-step';
 import { FieldDefinition } from '../proto/cog_pb';
-import { ListMembershipAware, ProspectAwareMixin } from './mixins';
+import { ListMembershipAware, ProspectAwareMixin, TrackerDomainAwareMixin } from './mixins';
 
 class ClientWrapper {
   public static expectedAuthFields: Field[] = [{
@@ -155,7 +155,7 @@ class ClientWrapper {
 }
 
 interface ClientWrapper extends ProspectAwareMixin, ListMembershipAware {}
-applyMixins(ClientWrapper, [ProspectAwareMixin, ListMembershipAware]);
+applyMixins(ClientWrapper, [ProspectAwareMixin, ListMembershipAware, TrackerDomainAwareMixin]);
 
 function applyMixins(derivedCtor: any, baseCtors: any[]) {
   baseCtors.forEach((baseCtor) => {
