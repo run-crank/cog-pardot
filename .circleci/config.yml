@@ -32,7 +32,7 @@ executors:
     environment:
       IMAGE_NAME: automatoninc/pardot
     machine:
-      image: cimg/node:12
+      image: ubuntu-2004:202201-02
 
 jobs:
   test:
