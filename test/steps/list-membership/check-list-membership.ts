@@ -19,7 +19,7 @@ describe('CheckListMembership', () => {
     protoStep = new ProtoStep();
     clientWrapperStub = sinon.stub();
     clientWrapperStub.readByEmail = sinon.stub();
-    clientWrapperStub.readByListIdAndProspectId = sinon.stub();
+    clientWrapperStub.getListMembershipByListIdAndProspectId = sinon.stub();
     stepUnderTest = new Step(clientWrapperStub);
   });
 
@@ -77,7 +77,7 @@ describe('CheckListMembership', () => {
     describe('List does not exist', () => {
       beforeEach(() => {
         clientWrapperStub.readByEmail.returns(Promise.resolve({ id: 1 }));
-        clientWrapperStub.readByListIdAndProspectId.throws({
+        clientWrapperStub.getListMembershipByListIdAndProspectId.throws({
           response: {
             data: {
               err: 'anyError'
@@ -94,7 +94,7 @@ describe('CheckListMembership', () => {
             optInOut: 'be opted in to',
             listId: 20,
           }));
-          clientWrapperStub.readByListIdAndProspectId.throws({
+          clientWrapperStub.getListMembershipByListIdAndProspectId.throws({
             response: {
               data: {
                 err: 'Invalid ID'
@@ -117,7 +117,7 @@ describe('CheckListMembership', () => {
             optInOut: 'not be a member of',
             listId: 20,
           }));
-          clientWrapperStub.readByListIdAndProspectId.throws({
+          clientWrapperStub.getListMembershipByListIdAndProspectId.throws({
             response: {
               data: {
                 err: 'Invalid ID'
@@ -143,7 +143,7 @@ describe('CheckListMembership', () => {
           optInOut: 'be opted in to',
           listId: 500,
         }));
-        clientWrapperStub.readByListIdAndProspectId.throws({
+        clientWrapperStub.getListMembershipByListIdAndProspectId.throws({
           response: {
             data: {
               err: 'anyError'
@@ -162,7 +162,7 @@ describe('CheckListMembership', () => {
       const listMembership: any = {};
       beforeEach(() => {
         clientWrapperStub.readByEmail.returns(Promise.resolve({ id: 200 }));
-        clientWrapperStub.readByListIdAndProspectId.returns(Promise.resolve({ list_membership: listMembership }));
+        clientWrapperStub.getListMembershipByListIdAndProspectId.returns(Promise.resolve({ list_membership: listMembership }));
       });
 
       describe('Expected to be opted in', () => {
