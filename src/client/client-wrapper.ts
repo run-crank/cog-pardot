@@ -1,3 +1,4 @@
+import { ListAware } from './mixins/list-aware';
 import { access } from 'fs';
 import * as grpc from 'grpc';
 const axios = require('axios');
@@ -154,8 +155,8 @@ class ClientWrapper {
   }
 }
 
-interface ClientWrapper extends ProspectAwareMixin, ListMembershipAware {}
-applyMixins(ClientWrapper, [ProspectAwareMixin, ListMembershipAware, TrackerDomainAwareMixin]);
+interface ClientWrapper extends ProspectAwareMixin, ListMembershipAware, ListAware {}
+applyMixins(ClientWrapper, [ProspectAwareMixin, ListMembershipAware, TrackerDomainAwareMixin, ListAware]);
 
 function applyMixins(derivedCtor: any, baseCtors: any[]) {
   baseCtors.forEach((baseCtor) => {

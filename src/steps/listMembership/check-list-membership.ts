@@ -96,7 +96,7 @@ export class CheckListMembership extends BaseStep implements StepInterface {
       }
       const prospect = await this.client.readByEmail(email, buid);
       prospectRecord = this.keyValue('prospect', 'Checked Prospect', prospect);
-      listMembership = (await this.client.readByListIdAndProspectId(listId, prospect.id, buid)).list_membership;
+      listMembership = (await this.client.getListMembershipByListIdAndProspectId(listId, prospect.id, buid)).list_membership;
     } catch (e) {
       //// This means that the List ID provided does not exist
       if (e.response.data.err === 'Invalid ID') {
