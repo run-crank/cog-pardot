@@ -1,5 +1,5 @@
 import { BaseStep, Field, StepInterface, ExpectedRecord } from '../../core/base-step';
-import { Step, RunStepResponse, FieldDefinition, StepDefinition, RecordDefinition } from '../../proto/cog_pb';
+import { Step, RunStepResponse, FieldDefinition, StepDefinition, RecordDefinition, StepRecord } from '../../proto/cog_pb';
 import * as util from '@run-crank/utilities';
 import { baseOperators } from '../../client/constants/operators';
 import { isNullOrUndefined } from 'util';
@@ -80,16 +80,16 @@ export class ProspectFieldEquals extends BaseStep implements StepInterface {
 
       const prospect = await this.client.readByEmail(email, buid);
 
-      const prospectRecord = this.keyValue('prospect', 'Checked Prospect', prospect);
+      const records = this.createRecords(prospect, stepData['__stepOrder']);
 
       if (!prospect.hasOwnProperty(field)) {
-        return this.fail('The %s field does not exist on Prospect %s', [field, email], [prospectRecord]);
+        return this.fail('The %s field does not exist on Prospect %s', [field, email], records);
       }
 
       const result = this.assert(operator, prospect[field], expectedValue, field);
 
-      return result.valid ? this.pass(result.message, [], [prospectRecord])
-        : this.fail(result.message, [], [prospectRecord]);
+      return result.valid ? this.pass(result.message, [], records)
+        : this.fail(result.message, [], records);
 
     } catch (e) {
       if (e instanceof util.UnknownOperatorError) {
@@ -103,6 +103,15 @@ export class ProspectFieldEquals extends BaseStep implements StepInterface {
       }
       return this.error('There was an error checking the prospect field: %s', [e.message]);
     }
+  }
+
+  public createRecords(prospect, stepOrder = 1): StepRecord[] {
+    const records = [];
+    // Base Record
+    records.push(this.keyValue('prospect', 'Checked Prospect', prospect));
+    // Ordered Record
+    records.push(this.keyValue(`prospect.${stepOrder}`, `Checked Prospect from Step ${stepOrder}`, prospect));
+    return records;
   }
 
 }

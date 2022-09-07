@@ -103,17 +103,16 @@ export class TrackerDomainFieldEquals extends BaseStep implements StepInterface 
 
       const trackerDomain = await this.client.getTrackerDomainById(id, expectedPardotFields, buid);
 
-      const record = this.createRecord(trackerDomain);
-      const orderedRecord = this.createOrderedRecord(trackerDomain, stepData['__stepOrder']);
+      const records = this.createRecords(trackerDomain, stepData['__stepOrder']);
 
       if (!trackerDomain.hasOwnProperty(field)) {
-        return this.fail('The %s field does not exist on Tracker Domain %s', [field, id], [record, orderedRecord]);
+        return this.fail('The %s field does not exist on Tracker Domain %s', [field, id], records);
       }
 
       const result = this.assert(operator, trackerDomain[field], expectedValue, field);
 
-      return result.valid ? this.pass(result.message, [], [record, orderedRecord])
-        : this.fail(result.message, [], [record, orderedRecord]);
+      return result.valid ? this.pass(result.message, [], records)
+        : this.fail(result.message, [], records);
 
     } catch (e) {
       console.log(e);
@@ -130,12 +129,13 @@ export class TrackerDomainFieldEquals extends BaseStep implements StepInterface 
     }
   }
 
-  public createRecord(trackerDomain): StepRecord {
-    return this.keyValue('trackerDomain', 'Tracker Domani', trackerDomain);
-  }
-
-  public createOrderedRecord(trackerDomain, stepOrder = 1): StepRecord {
-    return this.keyValue(`trackerDomain.${stepOrder}`, `Tracker Domain from Step ${stepOrder}`, trackerDomain);
+  public createRecords(trackerDomain, stepOrder = 1): StepRecord[] {
+    const records = [];
+    // Base Record
+    records.push(this.keyValue('trackerDomain', 'Tracker Domain', trackerDomain));
+    // Ordered Record
+    records.push(this.keyValue(`trackerDomain.${stepOrder}`, `Tracker Domain from Step ${stepOrder}`, trackerDomain));
+    return records;
   }
 }
 
