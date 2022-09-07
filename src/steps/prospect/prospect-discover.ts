@@ -1,5 +1,5 @@
 import { BaseStep, Field, StepInterface, ExpectedRecord } from '../../core/base-step';
-import { Step, RunStepResponse, FieldDefinition, StepDefinition, RecordDefinition } from '../../proto/cog_pb';
+import { Step, RunStepResponse, FieldDefinition, StepDefinition, RecordDefinition, StepRecord } from '../../proto/cog_pb';
 import * as util from '@run-crank/utilities';
 import { isNullOrUndefined } from 'util';
 
@@ -65,9 +65,9 @@ export class DiscoverProspect extends BaseStep implements StepInterface {
         return this.fail('No Prospect found with email %s in Business Unit %s', [email, buidName]);
       }
 
-      const prospectRecord = this.keyValue('discoverProspect', 'Discovered Prospect', prospect);
+      const records = this.createRecords(prospect, stepData['__stepOrder']);
 
-      return this.pass('Successfully discovered fields on prospect', [], [prospectRecord]);
+      return this.pass('Successfully discovered fields on prospect', [], records);
 
     } catch (e) {
       if (e instanceof util.InvalidOperandError) {
@@ -79,6 +79,15 @@ export class DiscoverProspect extends BaseStep implements StepInterface {
       }
       return this.error('There was an error discovering the prospect fields: %s', [e.message]);
     }
+  }
+
+  public createRecords(prospect, stepOrder = 1): StepRecord[] {
+    const records = [];
+    // Base Record
+    records.push(this.keyValue('prospect', 'Discovered Prospect', prospect));
+    // Ordered Record
+    records.push(this.keyValue(`prospect.${stepOrder}`, `Discovered Prospect from Step ${stepOrder}`, prospect));
+    return records;
   }
 
 }
