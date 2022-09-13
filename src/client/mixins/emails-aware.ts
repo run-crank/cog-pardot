@@ -12,8 +12,7 @@ export class EmailsAwareMixin {
     await this.clientReady;
     return this.attempt(() => {
       return new Promise((resolve, reject) => {
-        this.client.post(`https://${this.pardotUrl}/api/email/version/4/do/send/prospect_email/${prospectEmail}?campaign_id=${+campaignId}&email_template_id=${+emailTemplateId}&format=json`, 
-        {}, {
+        this.client.post(`https://${this.pardotUrl}/api/email/version/4/do/send/prospect_email/${prospectEmail}?campaign_id=${+campaignId}&email_template_id=${+emailTemplateId}&format=json`, {}, {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
             'Authorization': this.accessToken,
