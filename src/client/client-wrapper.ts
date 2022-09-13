@@ -6,7 +6,7 @@ const formData = require('form-data');
 import * as Retry from 'retry';
 import { Field } from '../core/base-step';
 import { FieldDefinition } from '../proto/cog_pb';
-import { ListMembershipAware, ProspectAwareMixin, TrackerDomainAwareMixin } from './mixins';
+import { EmailsAwareMixin, ListMembershipAware, ProspectAwareMixin, TrackerDomainAwareMixin } from './mixins';
 
 class ClientWrapper {
   public static expectedAuthFields: Field[] = [{
@@ -93,9 +93,7 @@ class ClientWrapper {
                       &refresh_token=${auth.get('refreshToken').toString()}`;
 
           tokenResponse = await axios.post(url);
-        }
-
-        if (auth.get('email').toString() && auth.get('password').toString()) {
+        } else if (auth.get('email').toString() && auth.get('password').toString()) {
           const data = new formData();
           data.append('username', auth.get('email').toString());
           data.append('password', auth.get('password').toString());
@@ -155,8 +153,8 @@ class ClientWrapper {
   }
 }
 
-interface ClientWrapper extends ProspectAwareMixin, ListMembershipAware, ListAware {}
-applyMixins(ClientWrapper, [ProspectAwareMixin, ListMembershipAware, TrackerDomainAwareMixin, ListAware]);
+interface ClientWrapper extends ProspectAwareMixin, ListMembershipAware, ListAware, EmailsAwareMixin {}
+applyMixins(ClientWrapper, [ProspectAwareMixin, ListMembershipAware, TrackerDomainAwareMixin, ListAware, EmailsAwareMixin]);
 
 function applyMixins(derivedCtor: any, baseCtors: any[]) {
   baseCtors.forEach((baseCtor) => {
