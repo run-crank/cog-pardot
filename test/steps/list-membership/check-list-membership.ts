@@ -18,7 +18,7 @@ describe('CheckListMembership', () => {
   beforeEach(() => {
     protoStep = new ProtoStep();
     clientWrapperStub = sinon.stub();
-    clientWrapperStub.readByEmail = sinon.stub();
+    clientWrapperStub.getProspectByEmail = sinon.stub();
     clientWrapperStub.getListMembershipByListIdAndProspectId = sinon.stub();
     stepUnderTest = new Step(clientWrapperStub);
   });
@@ -60,7 +60,7 @@ describe('CheckListMembership', () => {
 
     describe('Prospect does not exist', () => {
       beforeEach(() => {
-        clientWrapperStub.readByEmail.throws({response:{data:{err:'Invalid prospect email address'}}});
+        clientWrapperStub.getProspectByEmail.throws({response:{data:{err:'Invalid prospect email address'}}});
         protoStep.setData(Struct.fromJavaScript({
           email: 'invalid@thisisjust.atomatest.com',
           optInOut: 'not be a member of',
@@ -76,7 +76,7 @@ describe('CheckListMembership', () => {
 
     describe('List does not exist', () => {
       beforeEach(() => {
-        clientWrapperStub.readByEmail.returns(Promise.resolve({ id: 1 }));
+        clientWrapperStub.getProspectByEmail.returns(Promise.resolve({ id: 1 }));
         clientWrapperStub.getListMembershipByListIdAndProspectId.throws({
           response: {
             data: {
@@ -136,7 +136,7 @@ describe('CheckListMembership', () => {
 
     describe('Unexpected error when fetching list membership', () => {
       beforeEach(() => {
-        clientWrapperStub.readByEmail.returns(Promise.resolve({ id: 200 }));
+        clientWrapperStub.getProspectByEmail.returns(Promise.resolve({ id: 200 }));
 
         protoStep.setData(Struct.fromJavaScript({
           email: 'valid@thisisjust.atomatest.com',
@@ -161,7 +161,7 @@ describe('CheckListMembership', () => {
     describe('Valid List and Prospect', () => {
       const listMembership: any = {};
       beforeEach(() => {
-        clientWrapperStub.readByEmail.returns(Promise.resolve({ id: 200 }));
+        clientWrapperStub.getProspectByEmail.returns(Promise.resolve({ id: 200 }));
         clientWrapperStub.getListMembershipByListIdAndProspectId.returns(Promise.resolve({ list_membership: listMembership }));
       });
 

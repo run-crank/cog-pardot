@@ -59,7 +59,7 @@ export class DiscoverProspect extends BaseStep implements StepInterface {
         buid = this.client.additionalBusinessUnits[buidName];
       }
 
-      const prospect = await this.client.readByEmail(email, buid);
+      const prospect = await this.client.getProspectByEmail(email, buid);
 
       if (!prospect) {
         return this.fail('No Prospect found with email %s in Business Unit %s', [email, buidName]);

@@ -19,7 +19,7 @@ describe('ListMembershipCount', () => {
     protoStep = new ProtoStep();
     clientWrapperStub = sinon.stub();
     clientWrapperStub.getListByName = sinon.stub();
-    clientWrapperStub.getListMembershipsByListId = sinon.stub();
+    clientWrapperStub.getProspectsByListId = sinon.stub();
     stepUnderTest = new Step(clientWrapperStub);
   });
 
@@ -77,12 +77,13 @@ describe('ListMembershipCount', () => {
           };
           const expectedListMembershipResponse = {
             nextPageToken: null,
+            total_results: 1,
             values: [{
               id: 'anyId',
             }]
           };
           clientWrapperStub.getListByName.resolves(expectedListResponse);
-          clientWrapperStub.getListMembershipsByListId.resolves(expectedListMembershipResponse);
+          clientWrapperStub.getProspectsByListId.resolves(expectedListMembershipResponse);
           protoStep.setData(Struct.fromJavaScript({
             listName: 'anyName',
           }));
@@ -103,10 +104,11 @@ describe('ListMembershipCount', () => {
           };
           const expectedListMembershipResponse = {
             nextPageToken: null,
+            total_results: 1,
             values: []
           };
           clientWrapperStub.getListByName.resolves(expectedListResponse);
-          clientWrapperStub.getListMembershipsByListId.resolves(expectedListMembershipResponse);
+          clientWrapperStub.getProspectsByListId.resolves(expectedListMembershipResponse);
           protoStep.setData(Struct.fromJavaScript({
             listName: 'anyName',
           }));

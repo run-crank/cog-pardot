@@ -50,27 +50,16 @@ export class ListMembershipCount extends BaseStep implements StepInterface {
       }
       // Check if list exists and also get the id
       const list: any = await this.client.getListByName(listName, buid, ['id']);
-
       if (!list || (list && list.values.length === 0)) {
         return this.error('List with name %s does not exist', [
           listName,
         ]);
       }
 
-      let members = [];
-      let hasMore = true;
-      let nextPageToken = null;
-
-      while (hasMore) {
-        const data: any = await this.client.getListMembershipsByListId(list.values[0].id, buid, ['id'], nextPageToken);
-        members = members.concat(data.values);
-        hasMore = data.nextPageToken !== null;
-        nextPageToken = data.nextPageToken;
-      }
-
-      const record = this.createRecord(list.values[0].id, members.length);
-      const orderedRecord = this.createOrderedRecord(list.values[0].id, members.length, stepData['__stepOrder']);
-      return this.pass('List %s has %s members', [listName, members.length], [record, orderedRecord]);
+      const data = await this.client.getProspectsByListId(list.values[0].id, buid);
+      const record = this.createRecord(list.values[0].id, data.total_results);
+      const orderedRecord = this.createOrderedRecord(list.values[0].id, data.total_results, stepData['__stepOrder']);
+      return this.pass('List %s has %s members', [listName, data.total_results], [record, orderedRecord]);
     } catch (e) {
       return this.error('There was an error while checking list member count: %s', [e.message]);
     }
