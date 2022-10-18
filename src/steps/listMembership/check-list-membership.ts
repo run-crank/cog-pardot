@@ -94,7 +94,7 @@ export class CheckListMembership extends BaseStep implements StepInterface {
       } else {
         buid = this.client.additionalBusinessUnits[buidName];
       }
-      const prospect = await this.client.readByEmail(email, buid);
+      const prospect = await this.client.getProspectByEmail(email, buid);
       prospectRecord = this.keyValue('prospect', 'Checked Prospect', prospect);
       listMembership = (await this.client.getListMembershipByListIdAndProspectId(listId, prospect.id, buid)).list_membership;
     } catch (e) {

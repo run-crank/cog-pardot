@@ -18,7 +18,7 @@ describe('DiscoverProspectStep', () => {
   beforeEach(() => {
     protoStep = new ProtoStep();
     clientWrapperStub = sinon.stub();
-    clientWrapperStub.readByEmail = sinon.stub();
+    clientWrapperStub.getProspectByEmail = sinon.stub();
     stepUnderTest = new Step(clientWrapperStub);
   });
 
@@ -53,7 +53,7 @@ describe('DiscoverProspectStep', () => {
       const actualProspect = { email: 'test@pardot.com', age: 25 };
 
       beforeEach(() => {
-        clientWrapperStub.readByEmail.returns(Promise.resolve(actualProspect));
+        clientWrapperStub.getProspectByEmail.returns(Promise.resolve(actualProspect));
         protoStep.setData(Struct.fromJavaScript(actualProspect));
       });
 
@@ -72,7 +72,7 @@ describe('DiscoverProspectStep', () => {
       };
       beforeEach(() => {
         protoStep.setData(Struct.fromJavaScript(expectedValues));
-        clientWrapperStub.readByEmail.throws({response:{data:{err:'Invalid prospect email address'}}});
+        clientWrapperStub.getProspectByEmail.throws({response:{data:{err:'Invalid prospect email address'}}});
       });
 
       it('should respond with fail', async () => {
@@ -90,7 +90,7 @@ describe('DiscoverProspectStep', () => {
 
       beforeEach(() => {
         protoStep.setData(Struct.fromJavaScript(expectedValues));
-        clientWrapperStub.readByEmail.throws('some client error');
+        clientWrapperStub.getProspectByEmail.throws('some client error');
       });
 
       it('should respond with error', async () => {

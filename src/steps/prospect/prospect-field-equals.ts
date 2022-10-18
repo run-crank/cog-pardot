@@ -78,7 +78,7 @@ export class ProspectFieldEquals extends BaseStep implements StepInterface {
         buid = this.client.additionalBusinessUnits[buidName];
       }
 
-      const prospect = await this.client.readByEmail(email, buid);
+      const prospect = await this.client.getProspectByEmail(email, buid);
 
       const records = this.createRecords(prospect, stepData['__stepOrder']);
 
