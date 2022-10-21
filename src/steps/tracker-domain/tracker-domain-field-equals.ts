@@ -109,7 +109,7 @@ export class TrackerDomainFieldEquals extends BaseStep implements StepInterface 
         return this.fail('The %s field does not exist on Tracker Domain %s', [field, id], records);
       }
 
-      const result = this.assert(operator, trackerDomain[field], expectedValue, field);
+      const result = this.assert(operator, trackerDomain[field], expectedValue, field, stepData['__piiSuppressionLevel']);
 
       return result.valid ? this.pass(result.message, [], records)
         : this.fail(result.message, [], records);
