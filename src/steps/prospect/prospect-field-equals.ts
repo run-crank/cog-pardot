@@ -1,6 +1,5 @@
 import { BaseStep, Field, StepInterface, ExpectedRecord } from '../../core/base-step';
 import { Step, RunStepResponse, FieldDefinition, StepDefinition, RecordDefinition, StepRecord } from '../../proto/cog_pb';
-import * as util from '@run-crank/utilities';
 import { baseOperators } from '../../client/constants/operators';
 import { isNullOrUndefined } from 'util';
 
@@ -87,7 +86,6 @@ export class ProspectFieldEquals extends BaseStep implements StepInterface {
       }
 
       const result = this.assert(operator, prospect[field], expectedValue, field, stepData['__piiSuppressionLevel']);
-
       return result.valid ? this.pass(result.message, [], records)
         : this.fail(result.message, [], records);
 

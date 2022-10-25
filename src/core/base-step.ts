@@ -35,7 +35,7 @@ export abstract class BaseStep {
   protected expectedRecords?: ExpectedRecord[];
   protected stepHelp?: string;
 
-  constructor(protected client) { }
+  constructor(protected client) {}
 
   getId(): string {
     return this.constructor.name;
@@ -85,8 +85,8 @@ export abstract class BaseStep {
     return stepDefinition;
   }
 
-  assert(operator: string, actualValue: string, value: string, field: string, piiLevel: string = null): util.AssertionResult {
-    return util.assert(operator, actualValue, value, field, piiLevel);
+  assert(operator: string, actualValue: string, expectedValue: string, field: string): util.AssertionResult {
+    return util.assert(operator, actualValue, expectedValue, field);
   }
 
   protected pass(message: string, messageArgs: any[] = [], records: StepRecord[] = []): RunStepResponse {
