@@ -1,6 +1,7 @@
 import { BaseStep, Field, StepInterface, ExpectedRecord } from '../../core/base-step';
 import { Step, RunStepResponse, FieldDefinition, StepDefinition, RecordDefinition, StepRecord } from '../../proto/cog_pb';
 import { baseOperators } from '../../client/constants/operators';
+import * as util from '@run-crank/utilities';
 import { isNullOrUndefined } from 'util';
 
 // tslint:disable:no-else-after-return
