@@ -39,30 +39,40 @@ describe('Cog:GetManifest', () => {
         return field.toObject();
       });
 
-      // Instance URL field
-      const instanceUrl: any = authFields.filter(a => a.key === 'instanceUrl')[0];
-      expect(instanceUrl.type).to.equal(FieldDefinition.Type.URL);
-      expect(instanceUrl.optionality).to.equal(FieldDefinition.Optionality.REQUIRED);
+      // pardotUrl field
+      const pardotUrl: any = authFields.filter(a => a.key === 'pardotUrl')[0];
+      expect(pardotUrl.type).to.equal(FieldDefinition.Type.STRING);
+      expect(pardotUrl.optionality).to.equal(FieldDefinition.Optionality.REQUIRED);
 
-      // Client ID field
-      const clientId: any = authFields.filter(a => a.key === 'clientId')[0];
-      expect(clientId.type).to.equal(FieldDefinition.Type.STRING);
-      expect(clientId.optionality).to.equal(FieldDefinition.Optionality.REQUIRED);
+      // loginUrl field
+      const loginUrl: any = authFields.filter(a => a.key === 'loginUrl')[0];
+      expect(loginUrl.type).to.equal(FieldDefinition.Type.STRING);
+      expect(loginUrl.optionality).to.equal(FieldDefinition.Optionality.REQUIRED);
 
-      // Client Secret field
+      // email field
+      const email: any = authFields.filter(a => a.key === 'email')[0];
+      expect(email.type).to.equal(FieldDefinition.Type.EMAIL);
+      expect(email.optionality).to.equal(FieldDefinition.Optionality.REQUIRED);
+
+      // password field
+      const password: any = authFields.filter(a => a.key === 'password')[0];
+      expect(password.type).to.equal(FieldDefinition.Type.STRING);
+      expect(password.optionality).to.equal(FieldDefinition.Optionality.REQUIRED);
+
+      // clientSecret field
       const clientSecret: any = authFields.filter(a => a.key === 'clientSecret')[0];
       expect(clientSecret.type).to.equal(FieldDefinition.Type.STRING);
       expect(clientSecret.optionality).to.equal(FieldDefinition.Optionality.REQUIRED);
 
-      // Username field
-      const username: any = authFields.filter(a => a.key === 'username')[0];
-      expect(username.type).to.equal(FieldDefinition.Type.STRING);
-      expect(username.optionality).to.equal(FieldDefinition.Optionality.REQUIRED);
+      // clientId field
+      const clientId: any = authFields.filter(a => a.key === 'clientId')[0];
+      expect(clientId.type).to.equal(FieldDefinition.Type.STRING);
+      expect(clientId.optionality).to.equal(FieldDefinition.Optionality.REQUIRED);
 
-      // Password field
-      const password: any = authFields.filter(a => a.key === 'password')[0];
-      expect(password.type).to.equal(FieldDefinition.Type.STRING);
-      expect(password.optionality).to.equal(FieldDefinition.Optionality.REQUIRED);
+      // businessUnitId field
+      const businessUnitId: any = authFields.filter(a => a.key === 'businessUnitId')[0];
+      expect(businessUnitId.type).to.equal(FieldDefinition.Type.STRING);
+      expect(businessUnitId.optionality).to.equal(FieldDefinition.Optionality.REQUIRED);
 
       done();
     });
@@ -73,7 +83,7 @@ describe('Cog:GetManifest', () => {
       const stepDefs: StepDefinition[] = manifest.getStepDefinitionsList();
 
       // Step definitions list includes lead-field-equals step.
-      const hasLeadFieldEquals: boolean = stepDefs.filter(s => s.getStepId() === 'LeadFieldEquals').length === 1;
+      const hasLeadFieldEquals: boolean = stepDefs.filter(s => s.getStepId() === 'ProspectFieldEquals').length === 1;
       expect(hasLeadFieldEquals).to.equal(true);
 
       done();
