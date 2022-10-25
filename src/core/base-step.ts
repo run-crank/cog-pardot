@@ -35,7 +35,7 @@ export abstract class BaseStep {
   protected expectedRecords?: ExpectedRecord[];
   protected stepHelp?: string;
 
-  constructor(protected client) { }
+  constructor(protected client) {}
 
   getId(): string {
     return this.constructor.name;

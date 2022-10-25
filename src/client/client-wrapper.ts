@@ -153,7 +153,7 @@ class ClientWrapper {
   }
 }
 
-interface ClientWrapper extends ProspectAwareMixin, ListMembershipAware, ListAware, EmailsAwareMixin {}
+interface ClientWrapper extends ProspectAwareMixin, ListMembershipAware, TrackerDomainAwareMixin, ListAware, EmailsAwareMixin  {}
 applyMixins(ClientWrapper, [ProspectAwareMixin, ListMembershipAware, TrackerDomainAwareMixin, ListAware, EmailsAwareMixin]);
 
 function applyMixins(derivedCtor: any, baseCtors: any[]) {
