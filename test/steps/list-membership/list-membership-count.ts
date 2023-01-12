@@ -27,7 +27,7 @@ describe('ListMembershipCount', () => {
     it('should return expected step metadata', () => {
       const stepDef: StepDefinition = stepUnderTest.getDefinition();
       expect(stepDef.getStepId()).to.equal('ListMembershipCount');
-      expect(stepDef.getName()).to.equal('Count a Pardot List Membership');
+      expect(stepDef.getName()).to.equal('Count a Pardot list membership');
       expect(stepDef.getExpression()).to.equal('check the number of members from pardot list (?<listName>.+)');
       expect(stepDef.getType()).to.equal(StepDefinition.Type.VALIDATION);
     });

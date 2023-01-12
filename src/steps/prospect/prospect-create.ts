@@ -3,9 +3,11 @@ import { Step, RunStepResponse, FieldDefinition, StepDefinition, RecordDefinitio
 
 export class CreateProspect extends BaseStep implements StepInterface {
 
-  protected stepName: string = 'Create a Pardot Prospect';
+  protected stepName: string = 'Create a Pardot prospect';
   protected stepExpression: string = 'create a pardot prospect';
   protected stepType: StepDefinition.Type = StepDefinition.Type.ACTION;
+  protected actionList: string[] = ['create'];
+  protected targetObject: string = 'Prospect';
   protected expectedFields: Field[] = [{
     field: 'businessUnitName',
     type: FieldDefinition.Type.STRING,

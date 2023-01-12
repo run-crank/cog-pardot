@@ -7,9 +7,11 @@ import { isNullOrUndefined } from 'util';
 // tslint:disable:no-else-after-return
 export class TrackerDomainFieldEquals extends BaseStep implements StepInterface {
 
-  protected stepName: string = 'Check a field on a Pardot Tracker Domain';
+  protected stepName: string = 'Check a field on a Pardot tracker domain';
   protected stepExpression: string = 'the (?<field>[a-zA-Z0-9_]+) field on pardot tracker domain (?<id>.+) should (?<operator>be set|not be set|be less than|be greater than|be one of|be|contain|not be one of|not be|not contain) ?(?<expectedValue>.+)?';
   protected stepType: StepDefinition.Type = StepDefinition.Type.VALIDATION;
+  protected actionList: string[] = ['check'];
+  protected targetObject: string = 'Tracker Domain';
   protected expectedFields: Field[] = [{
     field: 'businessUnitName',
     type: FieldDefinition.Type.STRING,

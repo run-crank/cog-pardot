@@ -3,9 +3,11 @@ import { Step, RunStepResponse, FieldDefinition, StepDefinition } from '../../pr
 
 export class DeleteProspect extends BaseStep implements StepInterface {
 
-  protected stepName: string = 'Delete a Pardot Prospect';
+  protected stepName: string = 'Delete a Pardot prospect';
   protected stepExpression: string = 'delete the (?<email>.+) pardot prospect';
   protected stepType: StepDefinition.Type = StepDefinition.Type.ACTION;
+  protected actionList: string[] = ['delete'];
+  protected targetObject: string = 'Prospect';
   protected expectedFields: Field[] = [{
     field: 'businessUnitName',
     type: FieldDefinition.Type.STRING,

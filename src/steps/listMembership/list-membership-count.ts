@@ -7,10 +7,12 @@ import { baseOperators } from '../../client/constants/operators';
 
 export class ListMembershipCount extends BaseStep implements StepInterface {
 
-  protected stepName: string = 'Count a Pardot List Membership';
+  protected stepName: string = 'Count a Pardot list membership';
   // tslint:disable-next-line:max-line-length
   protected stepExpression: string = 'check the number of members from pardot list (?<listName>.+)';
   protected stepType: StepDefinition.Type = StepDefinition.Type.VALIDATION;
+  protected actionList: string[] = ['check'];
+  protected targetObject: string = 'List Membership Count';
   protected expectedFields: Field[] = [{
     field: 'businessUnitName',
     type: FieldDefinition.Type.STRING,
