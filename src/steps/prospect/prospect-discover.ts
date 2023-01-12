@@ -6,9 +6,11 @@ import { isNullOrUndefined } from 'util';
 // tslint:disable:no-else-after-return
 export class DiscoverProspect extends BaseStep implements StepInterface {
 
-  protected stepName: string = 'Discover fields on a Pardot Prospect';
+  protected stepName: string = 'Discover fields on a Pardot prospect';
   protected stepExpression: string = 'discover fields on pardot prospect (?<email>.+)';
   protected stepType: StepDefinition.Type = StepDefinition.Type.ACTION;
+  protected actionList: string[] = ['discover'];
+  protected targetObject: string = 'Prospect';
   protected expectedFields: Field[] = [{
     field: 'businessUnitName',
     type: FieldDefinition.Type.STRING,

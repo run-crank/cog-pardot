@@ -3,9 +3,11 @@ import { Step, RunStepResponse, FieldDefinition, StepDefinition, StepRecord, Rec
 
 export class ProspectSendSampleEmailStep extends BaseStep implements StepInterface {
 
-  protected stepName: string = 'Send Pardot Prospect Sample Email';
+  protected stepName: string = 'Send Pardot prospect sample email';
   protected stepExpression: string = 'send a sample email to pardot prospect (?<emailAddress>.+\@.+\..+)';
   protected stepType: StepDefinition.Type = StepDefinition.Type.ACTION;
+  protected actionList: string[] = [];
+  protected targetObject: string = 'Send Email';
   protected expectedFields: Field[] = [{
     field: 'businessUnitName',
     type: FieldDefinition.Type.STRING,

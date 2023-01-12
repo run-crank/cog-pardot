@@ -26,7 +26,7 @@ describe('CreateProspectStep', () => {
     it('should return expected step metadata', () => {
       const stepDef: StepDefinition = stepUnderTest.getDefinition();
       expect(stepDef.getStepId()).to.equal('CreateProspect');
-      expect(stepDef.getName()).to.equal('Create a Pardot Prospect');
+      expect(stepDef.getName()).to.equal('Create a Pardot prospect');
       expect(stepDef.getExpression()).to.equal('create a pardot prospect');
       expect(stepDef.getType()).to.equal(StepDefinition.Type.ACTION);
     });
