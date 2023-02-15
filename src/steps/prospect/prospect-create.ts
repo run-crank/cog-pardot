@@ -60,6 +60,7 @@ export class CreateProspect extends BaseStep implements StepInterface {
       }
       const result = await this.client.createProspect(prospect, buid);
       const record = this.createRecord(result.prospect);
+      const passingRecord = this.createPassingRecord(result.prospect, Object.keys(prospect));
       const orderedRecord = this.createOrderedRecord(result.prospect, stepData['__stepOrder']);
       return this.pass('Successfully created Prospect with ID %s', [result.prospect.id], [record, orderedRecord]);
     } catch (e) {
@@ -69,6 +70,18 @@ export class CreateProspect extends BaseStep implements StepInterface {
 
   public createRecord(prospect): StepRecord {
     return this.keyValue('prospect', 'Created Prospect', prospect);
+  }
+
+  public createPassingRecord(data, fields): StepRecord {
+    const filteredData = {};
+    if (data) {
+      Object.keys(data).forEach((key) => {
+        if (fields.includes(key)) {
+          filteredData[key] = data[key];
+        }
+      });
+    }
+    return this.keyValue('exposeOnPass:prospect', 'Created Prospect', filteredData);
   }
 
   public createOrderedRecord(prospect, stepOrder = 1): StepRecord {
