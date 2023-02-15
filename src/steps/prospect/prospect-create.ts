@@ -62,7 +62,7 @@ export class CreateProspect extends BaseStep implements StepInterface {
       const record = this.createRecord(result.prospect);
       const passingRecord = this.createPassingRecord(result.prospect, Object.keys(prospect));
       const orderedRecord = this.createOrderedRecord(result.prospect, stepData['__stepOrder']);
-      return this.pass('Successfully created Prospect with ID %s', [result.prospect.id], [record, orderedRecord]);
+      return this.pass('Successfully created Prospect with ID %s', [result.prospect.id], [record, passingRecord, orderedRecord]);
     } catch (e) {
       return this.error('There was a problem creating the Prospect: %s', [e.toString()]);
     }
