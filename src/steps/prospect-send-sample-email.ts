@@ -6,7 +6,7 @@ export class ProspectSendSampleEmailStep extends BaseStep implements StepInterfa
   protected stepName: string = 'Send Pardot prospect sample email';
   protected stepExpression: string = 'send a sample email to pardot prospect (?<emailAddress>.+\@.+\..+)';
   protected stepType: StepDefinition.Type = StepDefinition.Type.ACTION;
-  protected actionList: string[] = [];
+  protected actionList: string[] = ['send'];
   protected targetObject: string = 'Send Email';
   protected expectedFields: Field[] = [{
     field: 'businessUnitName',
